@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  /* Prevent pull-to-refresh interfering with the app's touch interactions. */
+  overscroll-behavior: none;
+}
+
+body {
+  /* Prioritise fonts with good extended Latin coverage for Dinka characters
+     (ɔ, ŋ, ä, ɛ, etc.). */
+  font-family:
+    'Noto Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+/* Safe area padding for notched phones and home indicators. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* Prevent accidental text selection during fast tapping. */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Subtle screen entrance animation. */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadein {
+  animation: fadeIn 0.15s ease-out;
+}
+
+/* Pulsing red dot while recording. */
+@keyframes recordPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.animate-record-pulse {
+  animation: recordPulse 1s ease-in-out infinite;
+}
+
+/* Extend Tailwind's font-size scale with xxs for tiny labels. */
+.text-xxs {
+  font-size: 0.65rem;
+  line-height: 1rem;
+}
+
+/* ── Dinka on-screen keyboard (react-simple-keyboard) ──────────────────────
+   Touch-friendly sizing and the app font so Dinka glyphs (ŋ ɛ ɔ ɣ ä…) render. */
+.thok-keyboard.simple-keyboard {
+  background: transparent;
+  padding: 4px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.thok-keyboard .hg-button {
+  height: 46px;
+  font-family: inherit;
+  font-size: 1.05rem;
+  border-radius: 7px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+.thok-keyboard .hg-button:active {
+  background: #dbeafe; /* blue-100 */
+}
+/* Make space + Done share the bottom row sensibly. */
+.thok-keyboard .hg-button[data-skbtn="{space}"] {
+  max-width: none;
+  flex-grow: 5;
+}
