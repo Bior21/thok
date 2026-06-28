@@ -74,7 +74,7 @@ serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from:    'Thok <noreply@thok.app>',
+            from:    'Thok <onboarding@resend.dev>',
             to:      [NOTIFY_EMAIL],
             subject: `New language request: ${language_name.trim()}`,
             html: `
