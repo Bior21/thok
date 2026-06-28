@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.thok.twa",
+      "sha256_cert_fingerprints": [
+        "FE:3B:D7:23:01:04:FE:0C:E5:66:24:D4:77:95:8D:7D:29:3A:64:9E:A9:CA:99:8F:42:1C:AC:6E:A3:04:36:F4"
+      ]
+    }
+  }
+]
