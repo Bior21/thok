@@ -109,16 +109,26 @@ export async function updateStreak(): Promise<number> {
   return newCount;
 }
 
-/** Loads the current streak count and last contribution date. */
+/** Loads the current streak count, resetting to 0 if more than one day has passed. */
 export async function loadStreak(): Promise<{ count: number; lastDate: string | null }> {
   const [countRow, dateRow] = await Promise.all([
     db.appState.get('streak_count'),
     db.appState.get('streak_last_date'),
   ]);
-  return {
-    count:    (countRow?.value as number) ?? 0,
-    lastDate: (dateRow?.value as string)  ?? null,
-  };
+
+  const count    = (countRow?.value as number) ?? 0;
+  const lastDate = (dateRow?.value as string)  ?? null;
+
+  if (lastDate) {
+    const today     = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (lastDate !== today && lastDate !== yesterday) {
+      await db.appState.put({ key: 'streak_count', value: 0 });
+      return { count: 0, lastDate };
+    }
+  }
+
+  return { count, lastDate };
 }
 
 // ── Concepts (offline cache) ───────────────────────────────────────────────────

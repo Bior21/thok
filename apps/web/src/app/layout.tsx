@@ -217,7 +217,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png" />
 
         <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
-        <title>Thok · Dinka</title>
+        <title>Thok</title>
       </head>
       <body className={`${notoSans.className} bg-slate-900 min-h-screen antialiased`}>
         {/* Constrain to mobile width — readable on tablets too. */}
