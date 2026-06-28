@@ -76,6 +76,51 @@ export async function updateContributor(patch: Partial<Contributor>): Promise<vo
   await db.contributor.put({ ...existing, ...patch });
 }
 
+// ── Streak ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Updates the daily streak after a contribution is made.
+ * - Same day as last contribution: no change (streak already counted today).
+ * - Previous day: increment streak (kept the chain alive).
+ * - Older: reset to 1 (missed a day, start fresh).
+ * Returns the new streak count.
+ */
+export async function updateStreak(): Promise<number> {
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+  const [countRow, dateRow] = await Promise.all([
+    db.appState.get('streak_count'),
+    db.appState.get('streak_last_date'),
+  ]);
+
+  const lastDate    = dateRow?.value as string | undefined;
+  const currentCount = (countRow?.value as number) ?? 0;
+
+  if (lastDate === today) return currentCount; // already contributed today
+
+  const newCount = lastDate === yesterday ? currentCount + 1 : 1;
+
+  await Promise.all([
+    db.appState.put({ key: 'streak_count',     value: newCount }),
+    db.appState.put({ key: 'streak_last_date', value: today }),
+  ]);
+
+  return newCount;
+}
+
+/** Loads the current streak count and last contribution date. */
+export async function loadStreak(): Promise<{ count: number; lastDate: string | null }> {
+  const [countRow, dateRow] = await Promise.all([
+    db.appState.get('streak_count'),
+    db.appState.get('streak_last_date'),
+  ]);
+  return {
+    count:    (countRow?.value as number) ?? 0,
+    lastDate: (dateRow?.value as string)  ?? null,
+  };
+}
+
 // ── Concepts (offline cache) ───────────────────────────────────────────────────
 
 /**

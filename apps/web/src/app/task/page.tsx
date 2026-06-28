@@ -23,6 +23,7 @@ import { useTask } from '@/hooks/useTask';
 import { StatusBar } from '@/components/layout/StatusBar';
 import { ContributeTask } from '@/components/contribute/ContributeTask';
 import { ReviewTask } from '@/components/review/ReviewTask';
+import { MilestoneCelebration } from '@/components/layout/MilestoneCelebration';
 
 export default function TaskPage() {
   const router           = useRouter();
@@ -34,6 +35,8 @@ export default function TaskPage() {
     isLoading,
     error,
     isSubmitting,
+    milestone,
+    clearMilestone,
     submitContribution,
     submitVerdict,
     skipTask,
@@ -149,6 +152,11 @@ export default function TaskPage() {
         )}
 
       </main>
+
+      {/* ── Milestone celebration overlay ───────────────────────────────── */}
+      {milestone !== null && (
+        <MilestoneCelebration milestone={milestone} onDismiss={clearMilestone} />
+      )}
 
       {/* ── Back link ───────────────────────────────────────────────────── */}
       <div className="px-4 pb-safe pb-4">

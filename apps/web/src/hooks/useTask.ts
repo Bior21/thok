@@ -19,7 +19,7 @@
 import { useState, useCallback } from 'react';
 import { useAppStore } from '@/store/app';
 import { fetchNextTask, submitReview, skipConcept } from '@/lib/api';
-import { queueEntry, getStorageInfo, getRandomCachedConcept, seedTotalContributionCount } from '@/lib/db/operations';
+import { queueEntry, getStorageInfo, getRandomCachedConcept, seedTotalContributionCount, updateStreak, getTotalEntryCount } from '@/lib/db/operations';
 import { isOnline, syncQueue } from '@/lib/sync/engine';
 import type {
   NextTask,
@@ -29,14 +29,19 @@ import type {
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
+const MILESTONES = [1, 10, 50, 100, 500, 1000];
+
 interface UseTaskState {
   task: NextTask | null;      // The current task to show, or null while loading
   isLoading: boolean;
   error: string | null;
   isSubmitting: boolean;
+  milestone: number | null;   // Set when the user just crossed a milestone
 }
 
 interface UseTaskActions {
+  /** Clears the milestone so the celebration stops showing. */
+  clearMilestone: () => void;
   /** Saves a new word to the device, uploads it, and loads the next task. */
   submitContribution: (params: {
     nativeWord: string;
@@ -63,11 +68,15 @@ export function useTask(): UseTaskState & UseTaskActions {
   const incrementContributions = useAppStore(s => s.incrementContributions);
   const setTotalContributions  = useAppStore(s => s.setTotalContributions);
   const setStorageInfo         = useAppStore(s => s.setStorageInfo);
+  const setStreakCount         = useAppStore(s => s.setStreakCount);
 
   const [task, setTask]               = useState<NextTask | null>(null);
   const [isLoading, setIsLoading]     = useState(false);
   const [error, setError]             = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [milestone, setMilestone]     = useState<number | null>(null);
+
+  const clearMilestone = useCallback(() => setMilestone(null), []);
 
   // ── Fetch next task ─────────────────────────────────────────────────────────
 
@@ -167,6 +176,18 @@ export function useTask(): UseTaskState & UseTaskActions {
 
       incrementContributions();
 
+      // Update streak and check for milestones.
+      const [newStreak, newTotal] = await Promise.all([updateStreak(), getTotalEntryCount()]);
+      setStreakCount(newStreak);
+
+      const seen: number[] = JSON.parse(localStorage.getItem('thok_milestones_seen') ?? '[]');
+      const crossed = MILESTONES.find(m => newTotal >= m && !seen.includes(m));
+      if (crossed !== undefined) {
+        seen.push(crossed);
+        localStorage.setItem('thok_milestones_seen', JSON.stringify(seen));
+        setMilestone(crossed);
+      }
+
       // Upload to the server before asking for the next task.
       // If the upload fails, the entry stays on the device and retries later.
       if (isOnline()) {
@@ -237,6 +258,8 @@ export function useTask(): UseTaskState & UseTaskActions {
     isLoading,
     error,
     isSubmitting,
+    milestone,
+    clearMilestone,
     submitContribution,
     submitVerdict,
     skipTask,

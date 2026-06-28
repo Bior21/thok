@@ -60,6 +60,12 @@ interface AppState {
   /** How many entries are saved on the device but not yet uploaded to the server. */
   pendingCount: number;
   setPendingCount: (count: number) => void;
+
+  // ── Streak ────────────────────────────────────────────────────────────────────
+
+  /** How many consecutive days this person has contributed. */
+  streakCount: number;
+  setStreakCount: (count: number) => void;
 }
 
 // ── Store ──────────────────────────────────────────────────────────────────────
@@ -73,6 +79,7 @@ export const useAppStore = create<AppState>((set) => ({
   storageInfo:        null,
   totalContributions: 0,
   pendingCount:       0,
+  streakCount:        0,
 
   // Functions that update the state
   setIsInitialising:      (v) => set({ isInitialising: v }),
@@ -81,6 +88,7 @@ export const useAppStore = create<AppState>((set) => ({
   setStorageInfo:         (storageInfo) => set({ storageInfo }),
   setTotalContributions:  (totalContributions) => set({ totalContributions }),
   setPendingCount:        (pendingCount) => set({ pendingCount }),
+  setStreakCount:         (streakCount) => set({ streakCount }),
 
   /** Adds 1 to the contribution count without needing to know the current total. */
   incrementContributions: () =>

@@ -29,6 +29,8 @@ export default function HomePage() {
   const setContributor     = useAppStore(s => s.setContributor);
   const totalContributions = useAppStore(s => s.totalContributions);
 
+  const streakCount        = useAppStore(s => s.streakCount);
+
   const [locationState, setLocationState] = useState('');
   const [locationTown, setLocationTown]   = useState('');
   const [savingLocation, setSavingLocation] = useState(false);
@@ -85,7 +87,14 @@ export default function HomePage() {
         <h1 className="text-xl font-semibold leading-tight">
           {contributor.name ? `Welcome back, ${contributor.name}` : 'Thok'}
         </h1>
-        <p className="text-xs text-white/55 mt-1">{headerLocation}</p>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-xs text-white/55">{headerLocation}</p>
+          {streakCount >= 2 && (
+            <span className="text-xs bg-orange-500/90 text-white px-2 py-0.5 rounded-full font-semibold">
+              🔥 {streakCount} day streak
+            </span>
+          )}
+        </div>
         <p className="text-xs text-white/40 mt-0.5">
           Helping digitalize indigenous African languages
         </p>

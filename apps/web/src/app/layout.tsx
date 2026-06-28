@@ -30,6 +30,7 @@ import {
   getPendingCount,
   getCachedConcepts,
   saveConcepts,
+  loadStreak,
 } from '@/lib/db/operations';
 import {
   setupConnectivityListener,
@@ -56,6 +57,7 @@ export default function RootLayout({
   const setPendingCount       = useAppStore(s => s.setPendingCount);
   const setConnectivity       = useAppStore(s => s.setConnectivity);
   const setIsInitialising     = useAppStore(s => s.setIsInitialising);
+  const setStreakCount        = useAppStore(s => s.setStreakCount);
 
   // Hold cleanup callbacks in refs so the useEffect cleanup function
   // (which must be synchronous) can call them without returning a promise.
@@ -68,13 +70,15 @@ export default function RootLayout({
       const contributor = await loadContributor();
       setContributor(contributor);
 
-      // 2. Load aggregate counts.
-      const [total, pending] = await Promise.all([
+      // 2. Load aggregate counts and streak.
+      const [total, pending, streak] = await Promise.all([
         getTotalEntryCount(),
         getPendingCount(),
+        loadStreak(),
       ]);
       setTotalContributions(total);
       setPendingCount(pending);
+      setStreakCount(streak.count);
 
       // 3. Load storage info.
       const storage = await getStorageInfo();
