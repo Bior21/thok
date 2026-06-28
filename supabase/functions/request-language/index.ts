@@ -24,7 +24,7 @@ const CORS = {
     'authorization, x-client-info, apikey, content-type',
 }
 
-const NOTIFY_EMAIL = 'biormadol21@gmail.com'
+const NOTIFY_EMAIL = 'biormadol@gmail.com'
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
