@@ -60,6 +60,7 @@ export type ConnectivityState = 'online' | 'syncing' | 'offline';
  */
 export interface Contributor {
   id: string;              // A unique ID assigned by the server on first sign-up
+  name?: string;           // Display name — optional, stored locally only
   town: string;            // e.g. "Bor"
   state: string;           // e.g. "Jonglei State"
   ageRange?: string;       // e.g. "18-24" — optional

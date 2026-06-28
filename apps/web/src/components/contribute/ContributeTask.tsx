@@ -315,23 +315,20 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
         {isSubmitting ? 'Saving…' : 'Submit → next'}
       </button>
 
-      <p className="text-center text-xs text-gray-400">
-        Saved locally · syncs when online
-      </p>
-
       {/* ── Skip ─────────────────────────────────────────────────────── */}
       <button
         onClick={onSkip}
         disabled={isSubmitting}
         className="
-          w-full py-2 text-xs text-gray-400 text-center
-          hover:text-gray-600 transition-colors
+          w-full py-2.5 text-sm text-gray-500 text-center font-medium
+          border border-gray-200 rounded-xl
+          active:bg-gray-50 transition-colors
           disabled:opacity-40 disabled:cursor-not-allowed
         "
       >
         {isSentence
           ? "I don't know the translation"
-          : `I don't know the Dinka word for "${prompt.englishGloss}"`
+          : "I don't know this word"
         }
       </button>
 

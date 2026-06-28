@@ -54,13 +54,18 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col">
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-[#1B3A5C] text-white px-4 pt-4 pb-3">
-        <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-2">
+      <header className="bg-[#1B3A5C] text-white px-5 pt-6 pb-5">
+        <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-3">
           Dinka · Thuɔŋjäŋ
         </div>
-        <h1 className="text-lg font-medium leading-tight">Thok</h1>
-        <p className="text-xs text-white/55 mt-0.5">
+        <h1 className="text-xl font-semibold leading-tight">
+          {contributor.name ? `Welcome back, ${contributor.name}` : 'Thok'}
+        </h1>
+        <p className="text-xs text-white/55 mt-1">
           {contributor.town}, {contributor.state}
+        </p>
+        <p className="text-xs text-white/40 mt-0.5">
+          Helping preserve African languages
         </p>
       </header>
 

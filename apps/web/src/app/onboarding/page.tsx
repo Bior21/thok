@@ -1,22 +1,3 @@
-/**
- * app/onboarding/page.tsx
- *
- * Onboarding screen — shown only on first open.
- *
- * Collects two fields:
- *   - State (dropdown — reduces typos in state names)
- *   - Home town (free text)
- *
- * These two fields drive dialect affinity routing on the backend.
- * No account, no password, no email.
- *
- * On submit:
- *   1. Call POST /register-contributor
- *   2. Save the returned contributor to IndexedDB
- *   3. Update global store
- *   4. Navigate to Home
- */
-
 'use client';
 
 import { useState } from 'react';
@@ -26,11 +7,6 @@ import { registerContributor } from '@/lib/api';
 import { saveContributor } from '@/lib/db/operations';
 import type { Contributor } from '@/types';
 
-// ── State list ─────────────────────────────────────────────────────────────────
-// Pre-populated to prevent spelling variations that break dialect inference.
-
-// Names match region_dialect_map.state values where seeded (e.g. "Jonglei State")
-// so affinity tier-2 routing compares states consistently.
 const SOUTH_SUDAN_STATES = [
   'Central Equatoria State',
   'Eastern Equatoria State',
@@ -46,12 +22,11 @@ const SOUTH_SUDAN_STATES = [
   'Other / Outside South Sudan',
 ] as const;
 
-// ── Component ──────────────────────────────────────────────────────────────────
-
 export default function OnboardingPage() {
-  const router        = useRouter();
+  const router         = useRouter();
   const setContributor = useAppStore(s => s.setContributor);
 
+  const [name, setName]             = useState('');
   const [state, setState]           = useState('');
   const [town, setTown]             = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +48,7 @@ export default function OnboardingPage() {
 
       const contributor: Contributor = {
         id:              response.contributorId,
+        name:            name.trim() || undefined,
         town:            town.trim(),
         state:           state.trim(),
         l1Status:        'L1',
@@ -81,12 +57,8 @@ export default function OnboardingPage() {
         createdAt:       new Date().toISOString(),
       };
 
-      // Persist to IndexedDB — this is what the app loads on every future open.
       await saveContributor(contributor);
-
-      // Update global state so layout.tsx doesn't redirect back.
       setContributor(contributor);
-
       router.push('/');
     } catch (err) {
       const message = err instanceof Error
@@ -99,33 +71,57 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header className="bg-[#1B3A5C] text-white px-4 pt-6 pb-5">
-        <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-3">
-          Dinka · Thuɔŋjäŋ
+      <header className="bg-[#1B3A5C] text-white px-6 pt-10 pb-8">
+        <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-5">
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
+          </svg>
         </div>
-        <h1 className="text-xl font-medium">Welcome to Thok</h1>
-        <p className="text-xs text-white/55 mt-1">
-          Tell us where you&apos;re from
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome to Thok</h1>
+        <p className="text-sm text-white/60 mt-1.5 leading-relaxed">
+          Help preserve African languages — one word at a time.
         </p>
       </header>
 
       {/* ── Form ────────────────────────────────────────────────────────── */}
-      <main className="flex-1 px-4 pt-6 pb-8 space-y-5">
+      <main className="flex-1 px-5 pt-7 pb-8 space-y-5">
 
-        <p className="text-sm text-gray-600 leading-relaxed">
-          Your location helps us route your words to the right Dinka dialect.
-          No account or personal details needed.
+        <p className="text-sm text-gray-500 leading-relaxed">
+          Your location helps us route words to the right dialect.
+          No account or password needed.
         </p>
+
+        {/* Name (optional) */}
+        <div>
+          <label htmlFor="name-input" className="block text-xs font-medium text-gray-500 mb-1.5">
+            Your name <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <input
+            id="name-input"
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="e.g. Deng, Ayen, Mading…"
+            autoCapitalize="words"
+            autoCorrect="off"
+            autoComplete="given-name"
+            spellCheck={false}
+            className="
+              w-full px-3 py-2.5 text-sm
+              border border-gray-200 rounded-lg bg-white text-gray-900
+              focus:outline-none focus:ring-2 focus:ring-[#1B3A5C]/30
+              placeholder:text-gray-400
+            "
+          />
+        </div>
 
         {/* State */}
         <div>
-          <label
-            htmlFor="state-select"
-            className="block text-xs font-medium text-gray-500 mb-1.5"
-          >
+          <label htmlFor="state-select" className="block text-xs font-medium text-gray-500 mb-1.5">
             Your state
           </label>
           <div className="relative">
@@ -155,10 +151,7 @@ export default function OnboardingPage() {
 
         {/* Town */}
         <div>
-          <label
-            htmlFor="town-input"
-            className="block text-xs font-medium text-gray-500 mb-1.5"
-          >
+          <label htmlFor="town-input" className="block text-xs font-medium text-gray-500 mb-1.5">
             Your home town
           </label>
           <input
@@ -181,25 +174,23 @@ export default function OnboardingPage() {
           />
         </div>
 
-        {/* Error */}
         {error && (
           <div className="text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
             {error}
           </div>
         )}
 
-        {/* Submit */}
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
           className="
-            w-full py-3 rounded-xl text-sm font-medium
+            w-full py-3.5 rounded-xl text-sm font-semibold
             bg-[#1B3A5C] text-white
             active:bg-[#152e4a] transition-colors
             disabled:opacity-40 disabled:cursor-not-allowed
           "
         >
-          {isSubmitting ? 'Setting up…' : 'Start contributing'}
+          {isSubmitting ? 'Setting up…' : 'Start contributing →'}
         </button>
 
       </main>
