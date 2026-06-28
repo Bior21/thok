@@ -25,6 +25,11 @@ import { ContributeTask } from '@/components/contribute/ContributeTask';
 import { ReviewTask } from '@/components/review/ReviewTask';
 import { MilestoneCelebration } from '@/components/layout/MilestoneCelebration';
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  dinka: 'Dinka',
+  nuer:  'Nuer',
+};
+
 export default function TaskPage() {
   const router           = useRouter();
   const isInitialising   = useAppStore(s => s.isInitialising);
@@ -82,9 +87,10 @@ export default function TaskPage() {
     ? 'Is this correct?'
     : isSentenceTask ? 'How do you say this?' : 'What is this?';
 
+  const langName = LANGUAGE_NAMES[contributor?.language ?? 'dinka'] ?? 'your language';
   const subtitleText = task?.taskType === 'review'
     ? 'Listen and decide'
-    : isSentenceTask ? 'Type the Dinka translation' : 'Type + record in Dinka';
+    : isSentenceTask ? `Type the ${langName} translation` : `Type + record in ${langName}`;
 
   return (
     <div className="min-h-screen flex flex-col">

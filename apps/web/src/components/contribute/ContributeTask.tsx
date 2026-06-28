@@ -59,6 +59,18 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
     setMicExplained(localStorage.getItem('thok_mic_explained') === 'true');
   }, []);
 
+  const {
+    isRecording,
+    recording,
+    error: recordingError,
+    isSupported: recordingSupported,
+    start,
+    stop,
+    cancel,
+    play,
+    clear,
+  } = useRecorder();
+
   const handleRecordTap = useCallback(() => {
     if (micExplained) {
       start();
@@ -73,18 +85,6 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
     setShowMicPrompt(false);
     start();
   }, [start]);
-
-  const {
-    isRecording,
-    recording,
-    error: recordingError,
-    isSupported: recordingSupported,
-    start,
-    stop,
-    cancel,
-    play,
-    clear,
-  } = useRecorder();
 
   const canSubmit =
     nativeWord.trim().length > 0 &&

@@ -7,6 +7,11 @@ import { StatusBar } from '@/components/layout/StatusBar';
 import { Dictionary } from '@/components/dictionary/Dictionary';
 import { updateContributor } from '@/lib/db/operations';
 
+const LANGUAGE_META: Record<string, { nameEnglish: string; nameNative: string }> = {
+  dinka: { nameEnglish: 'Dinka', nameNative: 'Thuɔŋjäŋ' },
+  nuer:  { nameEnglish: 'Nuer',  nameNative: 'Thok Naath' },
+};
+
 const SOUTH_SUDAN_STATES = [
   'Central Equatoria State',
   'Eastern Equatoria State',
@@ -76,13 +81,19 @@ export default function HomePage() {
     ? 'Location not set'
     : `${contributor.town}, ${contributor.state}`;
 
+  const langCode = contributor.language ?? 'dinka';
+  const langMeta = LANGUAGE_META[langCode] ?? { nameEnglish: langCode, nameNative: '' };
+  const langChip = langMeta.nameNative
+    ? `${langMeta.nameEnglish} · ${langMeta.nameNative}`
+    : langMeta.nameEnglish;
+
   return (
     <div className="min-h-screen flex flex-col">
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="bg-[#1B3A5C] text-white px-5 pt-6 pb-5">
         <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-3">
-          Dinka · Thuɔŋjäŋ
+          {langChip}
         </div>
         <h1 className="text-xl font-semibold leading-tight">
           {contributor.name ? `Welcome back, ${contributor.name}` : 'Thok'}
@@ -223,6 +234,38 @@ export default function HomePage() {
 
         {/* Live dictionary */}
         <Dictionary />
+
+        {/* Add your language */}
+        <button
+          onClick={() => router.push('/request-language')}
+          className="
+            w-full flex items-center gap-3 px-4 py-3
+            bg-white border border-gray-100 rounded-xl shadow-sm
+            active:bg-gray-50 transition-colors no-select
+          "
+        >
+          <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <svg
+              className="w-5 h-5 text-emerald-600"
+              fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </div>
+          <div className="text-left">
+            <div className="text-sm font-medium text-gray-900">Add your language</div>
+            <div className="text-xs text-gray-500">Request to bring your language to Thok</div>
+          </div>
+          <svg
+            className="w-4 h-4 text-gray-400 ml-auto"
+            fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
       </main>
     </div>

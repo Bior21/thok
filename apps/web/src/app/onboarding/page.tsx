@@ -22,10 +22,16 @@ const SOUTH_SUDAN_STATES = [
   'Other / Outside South Sudan',
 ] as const;
 
+const LANGUAGES = [
+  { code: 'dinka', nameEnglish: 'Dinka', nameNative: 'Thuɔŋjäŋ' },
+  { code: 'nuer',  nameEnglish: 'Nuer',  nameNative: 'Thok Naath' },
+] as const;
+
 export default function OnboardingPage() {
   const router         = useRouter();
   const setContributor = useAppStore(s => s.setContributor);
 
+  const [languageCode, setLanguageCode]   = useState('');
   const [name, setName]                   = useState('');
   const [state, setState]                 = useState('');
   const [town, setTown]                   = useState('');
@@ -34,7 +40,7 @@ export default function OnboardingPage() {
   const [error, setError]                 = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting || !languageCode) return;
     setIsSubmitting(true);
     setError(null);
 
@@ -42,8 +48,9 @@ export default function OnboardingPage() {
 
     try {
       const response = await registerContributor({
-        town:  town.trim(),
-        state: state.trim(),
+        town:         town.trim(),
+        state:        state.trim(),
+        languageCode,
       });
 
       const contributor: Contributor = {
@@ -89,7 +96,34 @@ export default function OnboardingPage() {
       </header>
 
       {/* ── Form ────────────────────────────────────────────────────────── */}
-      <main className="flex-1 px-5 pt-7 pb-8 space-y-5">
+      <main className="flex-1 px-5 pt-7 pb-8 space-y-6">
+
+        {/* Language selector */}
+        <div>
+          <label className="block text-xs font-medium text-gray-500 mb-2">
+            Which language are you contributing to?
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {LANGUAGES.map(lang => (
+              <button
+                key={lang.code}
+                type="button"
+                onClick={() => setLanguageCode(lang.code)}
+                className={`
+                  flex flex-col items-center gap-0.5 px-4 py-4 rounded-xl border-2
+                  text-left transition-colors
+                  ${languageCode === lang.code
+                    ? 'border-[#1B3A5C] bg-[#1B3A5C]/5'
+                    : 'border-gray-200 bg-white active:bg-gray-50'
+                  }
+                `}
+              >
+                <span className="text-sm font-semibold text-gray-900">{lang.nameEnglish}</span>
+                <span className="text-xs text-gray-500">{lang.nameNative}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Name (optional) */}
         <div>
@@ -198,7 +232,7 @@ export default function OnboardingPage() {
 
         <button
           onClick={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !languageCode}
           className="
             w-full py-3.5 rounded-xl text-sm font-semibold
             bg-[#1B3A5C] text-white
@@ -208,6 +242,13 @@ export default function OnboardingPage() {
         >
           {isSubmitting ? 'Setting up…' : 'Start Contributing →'}
         </button>
+
+        <p className="text-center text-xs text-gray-400">
+          Your language not listed?{' '}
+          <a href="/request-language" className="text-[#185FA5] underline">
+            Request to add it
+          </a>
+        </p>
 
       </main>
     </div>

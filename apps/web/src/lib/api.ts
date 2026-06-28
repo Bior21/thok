@@ -144,6 +144,7 @@ export async function skipConcept(
 export async function registerContributor(params: {
   town: string;
   state: string;
+  languageCode?: string;
   ageRange?: string;
   gender?: string;
   l1Status?: 'L1' | 'L2';
@@ -153,11 +154,12 @@ export async function registerContributor(params: {
     {
       method: 'POST',
       body: JSON.stringify({
-        town:       params.town,
-        state:      params.state,
-        age_range:  params.ageRange ?? null,
-        gender:     params.gender ?? null,
-        l1_status:  params.l1Status ?? 'L1',
+        town:          params.town,
+        state:         params.state,
+        language_code: params.languageCode ?? null,
+        age_range:     params.ageRange ?? null,
+        gender:        params.gender ?? null,
+        l1_status:     params.l1Status ?? 'L1',
       }),
     }
   );
@@ -167,6 +169,31 @@ export async function registerContributor(params: {
     dialectInferred: data.dialect_inferred ? String(data.dialect_inferred) : undefined,
     language:        String(data.language ?? 'dinka'),
   };
+}
+
+export async function requestLanguage(params: {
+  languageName: string;
+  region: string;
+  estSpeakers?: string;
+  contactName: string;
+  contactEmail: string;
+  message?: string;
+}): Promise<{ requestId: string }> {
+  const data = await callFunction<Record<string, unknown>>(
+    '/request-language', 'new',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        language_name: params.languageName,
+        region:        params.region,
+        est_speakers:  params.estSpeakers ?? null,
+        contact_name:  params.contactName,
+        contact_email: params.contactEmail,
+        message:       params.message ?? null,
+      }),
+    }
+  );
+  return { requestId: String(data.request_id ?? '') };
 }
 
 // ── Entries ────────────────────────────────────────────────────────────────────

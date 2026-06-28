@@ -8,14 +8,17 @@
  * Dinka dialect group.
  *
  * After inserting the record, a database trigger (set_contributor_location_metadata)
- * automatically fills in the language_id and tries to infer the dialect_id from
- * the town name. The dialect inference is what enables affinity-tier review routing:
- * speakers from the same dialect review each other's words first.
+ * fills in language_id (if not already provided) and tries to infer dialect_id
+ * from the town name. The dialect inference enables affinity-tier review routing.
+ *
+ * Body fields (all optional except language_code when multiple languages are active):
+ *   language_code — "dinka" or "nuer" (defaults to first active language if omitted)
+ *   town, state   — contributor's location (optional; deferred to later if skipped)
  *
  * Returns:
  *   - contributor_id: the UUID to store on the device (used in all future requests)
  *   - dialect_inferred: the dialect code matched from town, or null if not matched
- *   - language: always "dinka" for now
+ *   - language: language code, e.g. "dinka" or "nuer"
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
@@ -36,7 +39,7 @@ serve(async (req) => {
     const body = await req.json().catch(() => null)
     if (!body) return err(400, 'INVALID_BODY', 'JSON body required.')
 
-    const { town, state, age_range, gender, l1_status } = body
+    const { town, state, age_range, gender, l1_status, language_code } = body
 
     // Town and state are optional — contributors can skip location during onboarding
     // and provide it later. We use placeholder values so the DB constraints are met.
@@ -50,8 +53,22 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
+    // Resolve language_id from language_code if provided; otherwise the trigger
+    // picks the first active language as a fallback.
+    let resolvedLanguageId: number | null = null
+    if (language_code?.trim()) {
+      const { data: lang } = await supabase
+        .from('languages')
+        .select('id')
+        .eq('code', language_code.trim().toLowerCase())
+        .eq('is_mvp_active', true)
+        .single()
+      resolvedLanguageId = lang?.id ?? null
+    }
+
     // Insert the contributor. The database trigger fires here and fills in
-    // language_id and dialect_id based on the town/state values.
+    // dialect_id from town/state. language_id is pre-set above so the trigger
+    // respects the user's chosen language.
     const { data: contributor, error: insertError } = await supabase
       .from('contributors')
       .insert({
@@ -60,7 +77,8 @@ serve(async (req) => {
         age_range:   age_range ?? null,
         gender:      gender ?? null,
         l1_status:   l1_status ?? 'L1',
-        is_reviewer: true,  // All contributors can also review
+        language_id: resolvedLanguageId,  // null → trigger uses first active language
+        is_reviewer: true,                 // All contributors can also review
       })
       .select('id, dialect_id, language_id')
       .single()
