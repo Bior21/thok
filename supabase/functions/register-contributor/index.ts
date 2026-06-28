@@ -38,9 +38,10 @@ serve(async (req) => {
 
     const { town, state, age_range, gender, l1_status } = body
 
-    // State and town are the minimum required — everything else is optional metadata.
-    if (!town?.trim() || !state?.trim())
-      return err(400, 'MISSING_FIELDS', 'town and state are required.')
+    // Town and state are optional — contributors can skip location during onboarding
+    // and provide it later. We use placeholder values so the DB constraints are met.
+    const resolvedTown  = town?.trim()  || 'Unknown'
+    const resolvedState = state?.trim() || 'Other / Outside South Sudan'
 
     // Use the service role key so this function can write to the database
     // without needing the user to be logged in.
@@ -54,8 +55,8 @@ serve(async (req) => {
     const { data: contributor, error: insertError } = await supabase
       .from('contributors')
       .insert({
-        town:        town.trim(),
-        state:       state.trim(),
+        town:        resolvedTown,
+        state:       resolvedState,
         age_range:   age_range ?? null,
         gender:      gender ?? null,
         l1_status:   l1_status ?? 'L1',

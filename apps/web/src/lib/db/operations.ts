@@ -66,6 +66,16 @@ export async function loadContributor(): Promise<Contributor | null> {
   return rows[0] ?? null;
 }
 
+/**
+ * Updates specific fields on the saved contributor profile.
+ * Used when the contributor provides their location after skipping onboarding.
+ */
+export async function updateContributor(patch: Partial<Contributor>): Promise<void> {
+  const existing = await loadContributor();
+  if (!existing) return;
+  await db.contributor.put({ ...existing, ...patch });
+}
+
 // ── Concepts (offline cache) ───────────────────────────────────────────────────
 
 /**

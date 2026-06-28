@@ -26,19 +26,19 @@ export default function OnboardingPage() {
   const router         = useRouter();
   const setContributor = useAppStore(s => s.setContributor);
 
-  const [name, setName]             = useState('');
-  const [state, setState]           = useState('');
-  const [town, setTown]             = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError]           = useState<string | null>(null);
-
-  const canSubmit = state.trim() !== '' && town.trim() !== '' && !isSubmitting;
+  const [name, setName]                   = useState('');
+  const [state, setState]                 = useState('');
+  const [town, setTown]                   = useState('');
+  const [showLocation, setShowLocation]   = useState(false);
+  const [isSubmitting, setIsSubmitting]   = useState(false);
+  const [error, setError]                 = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
-
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setError(null);
+
+    const hasLocation = state.trim() !== '' && town.trim() !== '';
 
     try {
       const response = await registerContributor({
@@ -47,14 +47,15 @@ export default function OnboardingPage() {
       });
 
       const contributor: Contributor = {
-        id:              response.contributorId,
-        name:            name.trim() || undefined,
-        town:            town.trim(),
-        state:           state.trim(),
-        l1Status:        'L1',
-        dialectInferred: response.dialectInferred,
-        language:        response.language,
-        createdAt:       new Date().toISOString(),
+        id:               response.contributorId,
+        name:             name.trim() || undefined,
+        locationDeferred: !hasLocation,
+        town:             hasLocation ? town.trim()  : 'Unknown',
+        state:            hasLocation ? state.trim() : 'Other / Outside South Sudan',
+        l1Status:         'L1',
+        dialectInferred:  response.dialectInferred,
+        language:         response.language,
+        createdAt:        new Date().toISOString(),
       };
 
       await saveContributor(contributor);
@@ -90,11 +91,6 @@ export default function OnboardingPage() {
       {/* ── Form ────────────────────────────────────────────────────────── */}
       <main className="flex-1 px-5 pt-7 pb-8 space-y-5">
 
-        <p className="text-sm text-gray-500 leading-relaxed">
-          Your location helps us route words to the right dialect.
-          No account or password needed.
-        </p>
-
         {/* Name (optional) */}
         <div>
           <label htmlFor="name-input" className="block text-xs font-medium text-gray-500 mb-1.5">
@@ -119,60 +115,80 @@ export default function OnboardingPage() {
           />
         </div>
 
-        {/* State */}
-        <div>
-          <label htmlFor="state-select" className="block text-xs font-medium text-gray-500 mb-1.5">
-            Your state
-          </label>
-          <div className="relative">
-            <select
-              id="state-select"
-              value={state}
-              onChange={e => setState(e.target.value)}
-              className="
-                w-full px-3 py-2.5 text-sm appearance-none
-                border border-gray-200 rounded-lg bg-white text-gray-900
-                focus:outline-none focus:ring-2 focus:ring-[#1B3A5C]/30
-              "
-            >
-              <option value="">Select a state…</option>
-              {SOUTH_SUDAN_STATES.map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            <svg
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-        </div>
+        {/* Location toggle */}
+        <button
+          type="button"
+          onClick={() => setShowLocation(v => !v)}
+          className="flex items-center gap-2 text-sm text-[#185FA5] font-medium"
+        >
+          <svg
+            className={`w-4 h-4 transition-transform ${showLocation ? 'rotate-90' : ''}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          {showLocation ? 'Hide location' : 'Add your location (helps match your dialect)'}
+        </button>
 
-        {/* Town */}
-        <div>
-          <label htmlFor="town-input" className="block text-xs font-medium text-gray-500 mb-1.5">
-            Your home town
-          </label>
-          <input
-            id="town-input"
-            type="text"
-            value={town}
-            onChange={e => setTown(e.target.value)}
-            placeholder="e.g. Bor, Gogrial, Aweil…"
-            autoCapitalize="words"
-            autoCorrect="off"
-            autoComplete="off"
-            spellCheck={false}
-            className="
-              w-full px-3 py-2.5 text-sm
-              border border-gray-200 rounded-lg bg-white text-gray-900
-              focus:outline-none focus:ring-2 focus:ring-[#1B3A5C]/30
-              placeholder:text-gray-400
-            "
-            onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-          />
-        </div>
+        {/* Location fields */}
+        {showLocation && (
+          <div className="space-y-4 pl-1">
+            {/* State */}
+            <div>
+              <label htmlFor="state-select" className="block text-xs font-medium text-gray-500 mb-1.5">
+                Your state
+              </label>
+              <div className="relative">
+                <select
+                  id="state-select"
+                  value={state}
+                  onChange={e => setState(e.target.value)}
+                  className="
+                    w-full px-3 py-2.5 text-sm appearance-none
+                    border border-gray-200 rounded-lg bg-white text-gray-900
+                    focus:outline-none focus:ring-2 focus:ring-[#1B3A5C]/30
+                  "
+                >
+                  <option value="">Select a state…</option>
+                  {SOUTH_SUDAN_STATES.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+                <svg
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Town */}
+            <div>
+              <label htmlFor="town-input" className="block text-xs font-medium text-gray-500 mb-1.5">
+                Your home town
+              </label>
+              <input
+                id="town-input"
+                type="text"
+                value={town}
+                onChange={e => setTown(e.target.value)}
+                placeholder="e.g. Bor, Gogrial, Aweil…"
+                autoCapitalize="words"
+                autoCorrect="off"
+                autoComplete="off"
+                spellCheck={false}
+                className="
+                  w-full px-3 py-2.5 text-sm
+                  border border-gray-200 rounded-lg bg-white text-gray-900
+                  focus:outline-none focus:ring-2 focus:ring-[#1B3A5C]/30
+                  placeholder:text-gray-400
+                "
+                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+              />
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
@@ -182,7 +198,7 @@ export default function OnboardingPage() {
 
         <button
           onClick={handleSubmit}
-          disabled={!canSubmit}
+          disabled={isSubmitting}
           className="
             w-full py-3.5 rounded-xl text-sm font-semibold
             bg-[#1B3A5C] text-white
@@ -190,7 +206,7 @@ export default function OnboardingPage() {
             disabled:opacity-40 disabled:cursor-not-allowed
           "
         >
-          {isSubmitting ? 'Setting up…' : 'Start contributing →'}
+          {isSubmitting ? 'Setting up…' : 'Start Contributing →'}
         </button>
 
       </main>
