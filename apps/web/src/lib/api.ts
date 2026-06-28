@@ -171,6 +171,14 @@ export async function registerContributor(params: {
   };
 }
 
+export async function fetchLeaderboard(contributorId: string): Promise<{
+  leaderboard: { state: string; wordCount: number }[];
+  contributorState: string | null;
+  contributorRank: number | null;
+}> {
+  return callFunction('/get-leaderboard', contributorId, { method: 'GET' });
+}
+
 export async function requestLanguage(params: {
   languageName: string;
   region: string;

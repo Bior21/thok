@@ -32,19 +32,20 @@ import type {
 interface VerdictBtn {
   value: string;
   icon: string;
+  label: string;
   activeClass: string;
 }
 
 const TEXT_BTNS: VerdictBtn[] = [
-  { value: 'correct',       icon: '✓', activeClass: 'bg-green-500 border-green-500 text-white' },
-  { value: 'valid_variant', icon: '⚠', activeClass: 'bg-amber-500 border-amber-500 text-white' },
-  { value: 'wrong_word',    icon: '✗', activeClass: 'bg-red-500   border-red-500   text-white' },
+  { value: 'correct',       icon: '✓', label: 'Correct', activeClass: 'bg-green-500 border-green-500 text-white' },
+  { value: 'valid_variant', icon: '⚠', label: 'Unsure',  activeClass: 'bg-amber-500 border-amber-500 text-white' },
+  { value: 'wrong_word',    icon: '✗', label: 'Wrong',   activeClass: 'bg-red-500   border-red-500   text-white' },
 ];
 
 const AUDIO_BTNS: VerdictBtn[] = [
-  { value: 'correct',       icon: '✓', activeClass: 'bg-green-500 border-green-500 text-white' },
-  { value: 'valid_variant', icon: '⚠', activeClass: 'bg-amber-500 border-amber-500 text-white' },
-  { value: 'bad_audio',     icon: '✗', activeClass: 'bg-red-500   border-red-500   text-white' },
+  { value: 'correct',       icon: '✓', label: 'Good',  activeClass: 'bg-green-500 border-green-500 text-white' },
+  { value: 'valid_variant', icon: '⚠', label: 'Unsure', activeClass: 'bg-amber-500 border-amber-500 text-white' },
+  { value: 'bad_audio',     icon: '✗', label: 'Poor',  activeClass: 'bg-red-500   border-red-500   text-white' },
 ];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -376,7 +377,7 @@ function VerdictButtons({
   disabled: boolean;
 }) {
   return (
-    <div className="flex items-center gap-1 flex-shrink-0">
+    <div className="flex items-center gap-1.5 flex-shrink-0">
       {buttons.map(btn => {
         const isActive = value === btn.value;
         return (
@@ -386,7 +387,8 @@ function VerdictButtons({
             aria-pressed={isActive}
             disabled={disabled}
             className={`
-              w-9 h-9 rounded-lg border text-sm font-medium transition-colors
+              flex flex-col items-center justify-center gap-0.5
+              w-14 py-1.5 rounded-lg border text-xs font-medium transition-colors
               ${isActive
                 ? btn.activeClass
                 : 'border-gray-200 text-gray-400 bg-white'}
@@ -395,7 +397,8 @@ function VerdictButtons({
                 : 'active:scale-95'}
             `}
           >
-            {btn.icon}
+            <span className="text-sm leading-none">{btn.icon}</span>
+            <span className="leading-none">{btn.label}</span>
           </button>
         );
       })}

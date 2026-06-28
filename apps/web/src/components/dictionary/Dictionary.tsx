@@ -117,8 +117,8 @@ export function Dictionary() {
       <SectionHeader />
 
       {entries.length === 0 ? (
-        <p className="text-xs text-gray-400">
-          No words yet. Start a session to contribute your first word.
+        <p className="text-xs text-gray-400 leading-relaxed">
+          Your words will appear here. Every word you record helps preserve your language for the next generation.
         </p>
       ) : (
         <div className="divide-y divide-gray-100">

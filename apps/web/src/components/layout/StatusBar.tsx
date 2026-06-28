@@ -21,28 +21,31 @@ export function StatusBar() {
   const pendingCount = useAppStore(s => s.pendingCount);
   const storageInfo  = useAppStore(s => s.storageInfo);
 
+  const showStorage = storageInfo?.isWarning ?? false;
+
+  // Only show the bar when there's something worth telling the user.
+  // "Online" with nothing pending is noise — hide it.
+  const isQuiet = connectivity === 'online' && pendingCount === 0 && !showStorage;
+  if (isQuiet) return null;
+
   const config = {
     online: {
       dotClass: 'bg-green-500',
-      label: pendingCount > 0
-        ? `Online · ${pendingCount} pending sync`
-        : 'Online',
+      label: `${pendingCount} word${pendingCount === 1 ? '' : 's'} uploading…`,
     },
     syncing: {
       dotClass: 'bg-amber-400 animate-pulse',
       label: pendingCount > 0
-        ? `Syncing ${pendingCount} entr${pendingCount === 1 ? 'y' : 'ies'}…`
+        ? `Uploading ${pendingCount} entr${pendingCount === 1 ? 'y' : 'ies'}…`
         : 'Syncing…',
     },
     offline: {
       dotClass: 'bg-gray-400',
       label: pendingCount > 0
-        ? `Offline · ${pendingCount} queued`
-        : 'Offline',
+        ? `Offline — ${pendingCount} saved locally`
+        : 'Offline — saving locally',
     },
   }[connectivity];
-
-  const showStorage = storageInfo?.isWarning ?? false;
 
   return (
     <div className="px-4 pt-2 pb-1.5 space-y-1.5">
