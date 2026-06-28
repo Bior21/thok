@@ -92,11 +92,34 @@ export default function HomePage() {
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header className="bg-[#1B3A5C] text-white px-5 pt-6 pb-5">
-        <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-3">
-          {langChip}
+        <div className="flex items-start justify-between">
+          <div className="inline-block text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full mb-3">
+            {langChip}
+          </div>
+          <button
+            onClick={() => router.push('/profile')}
+            className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center active:bg-white/25 transition-colors"
+            aria-label="Profile"
+          >
+            {contributor.name ? (
+              <span className="text-sm font-semibold text-white">
+                {contributor.name[0].toUpperCase()}
+              </span>
+            ) : (
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            )}
+          </button>
         </div>
         <h1 className="text-xl font-semibold leading-tight">
-          {contributor.name ? `Welcome back, ${contributor.name}` : 'Thok'}
+          {contributor.name
+            ? totalContributions === 0
+              ? `Welcome, ${contributor.name}`
+              : `Welcome back, ${contributor.name}`
+            : 'Thok'
+          }
         </h1>
         <div className="flex items-center justify-between mt-1">
           <p className="text-xs text-white/55">{headerLocation}</p>
