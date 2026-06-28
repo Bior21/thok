@@ -83,7 +83,7 @@ export default function OnboardingPage() {
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">Welcome to Thok</h1>
         <p className="text-sm text-white/60 mt-1.5 leading-relaxed">
-          Help preserve African languages — one word at a time.
+          Helping digitalize indigenous African languages — one word at a time.
         </p>
       </header>
 

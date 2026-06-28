@@ -65,7 +65,7 @@ export default function HomePage() {
           {contributor.town}, {contributor.state}
         </p>
         <p className="text-xs text-white/40 mt-0.5">
-          Helping preserve African languages
+          Helping digitalize indigenous African languages
         </p>
       </header>
 
