@@ -18,7 +18,7 @@
 
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useRecorder } from '@/hooks/useRecorder';
 import { selectIsStorageBlocked } from '@/store/app';
 import { useAppStore } from '@/store/app';
@@ -52,6 +52,27 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
 
   // The Dinka on-screen keyboard appears when the word field is focused.
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [showMicPrompt, setShowMicPrompt] = useState(false);
+  const [micExplained, setMicExplained] = useState(false);
+
+  useEffect(() => {
+    setMicExplained(localStorage.getItem('thok_mic_explained') === 'true');
+  }, []);
+
+  const handleRecordTap = useCallback(() => {
+    if (micExplained) {
+      start();
+    } else {
+      setShowMicPrompt(true);
+    }
+  }, [micExplained, start]);
+
+  const handleAllowAndRecord = useCallback(() => {
+    localStorage.setItem('thok_mic_explained', 'true');
+    setMicExplained(true);
+    setShowMicPrompt(false);
+    start();
+  }, [start]);
 
   const {
     isRecording,
@@ -239,9 +260,9 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
       {recordingSupported && !isStorageBlocked && (
         <div className="space-y-1.5">
           {/* Idle — no recording yet */}
-          {!isRecording && !recording && (
+          {!isRecording && !recording && !showMicPrompt && (
             <button
-              onClick={start}
+              onClick={handleRecordTap}
               className="
                 w-full flex items-center justify-center gap-2 py-2.5
                 border border-green-500 text-green-700 text-sm font-medium
@@ -251,6 +272,40 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
               <MicIcon />
               {isSentence ? 'Record reading' : 'Record pronunciation'}
             </button>
+          )}
+
+          {/* First-time mic explanation — shown before permission dialog */}
+          {showMicPrompt && (
+            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 space-y-2.5">
+              <div className="flex items-start gap-2.5">
+                <span className="mt-0.5 text-green-700"><MicIcon /></span>
+                <div>
+                  <p className="text-sm font-semibold text-green-900">Allow microphone access</p>
+                  <p className="text-xs text-green-700 mt-0.5 leading-relaxed">
+                    Your pronunciation recording helps future speakers learn authentic Dinka.
+                    Audio is only used for language preservation.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAllowAndRecord}
+                  className="
+                    flex-1 py-2 text-sm font-semibold
+                    bg-green-700 text-white rounded-lg
+                    active:bg-green-800 transition-colors
+                  "
+                >
+                  Allow &amp; Record
+                </button>
+                <button
+                  onClick={() => setShowMicPrompt(false)}
+                  className="px-4 py-2 text-sm text-green-700 border border-green-300 rounded-lg active:bg-green-100"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Recording in progress */}
