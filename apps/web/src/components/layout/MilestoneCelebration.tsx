@@ -16,7 +16,7 @@ interface MilestoneInfo {
   emoji: string;
   title: string;
   body: string;
-  shareMessage: (lang: string, name?: string) => string;
+  shareMessage: (lang: string) => string;
 }
 
 const LABELS: Record<number, MilestoneInfo> = {
@@ -24,61 +24,48 @@ const LABELS: Record<number, MilestoneInfo> = {
     emoji: '🌱',
     title: 'First word!',
     body:  'You just made your first contribution to Thok. Every word counts.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} just made their first contribution to save the ${lang} language on Thok! 🌱\n\nOur language is part of who we are. Every word recorded today is a word saved forever. Don't wait — start now.`
-        : `I just made my first contribution to save the ${lang} language on Thok! 🌱\n\nOur language is part of who we are. Every word recorded today is a word saved forever. Don't wait — start now.`,
+    shareMessage: (lang) =>
+      `Just tried out the Thok app and added my first ${lang} words. This is exactly what our community needs. Who thinks their ${lang} is flawless? Try it:`,
   },
   10: {
     emoji: '🔥',
     title: '10 words!',
     body:  'You\'ve contributed 10 words. You\'re helping build something real.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} just contributed 10 ${lang} words on Thok! 🔥\n\nEvery day our language loses speakers. ${name} is fighting back — one word at a time. Are you going to let them do it alone?\n\nJoin the mission:`
-        : `I just contributed 10 ${lang} words on Thok! 🔥\n\nEvery day our language loses speakers. I am fighting back — one word at a time. Are you going to sit and watch our language disappear?\n\nJoin the mission:`,
+    shareMessage: (lang) =>
+      `Added 10 words on Thok today. It's actually crazy seeing our ${lang} language written out like this. Go check it out and see how many you can get right:`,
   },
   50: {
     emoji: '⭐',
     title: '50 words!',
     body:  'Incredible. 50 words preserved for future generations.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} has contributed 50 ${lang} words on Thok! ⭐\n\n50 words that will never be lost. Our children deserve to inherit a living language. If not us, who? If not now, when?\n\nContribute:`
-        : `I have contributed 50 ${lang} words on Thok! ⭐\n\n50 words that will never be lost. Our children deserve to inherit a living language. If not us, who? If not now, when?\n\nContribute:`,
+    shareMessage: (lang) =>
+      `50 words done on Thok! Proud to be putting our beautiful ${lang} language on the map. Let's see who can top my list tonight. 🇸🇸 Join here:`,
   },
   100: {
     emoji: '🏆',
     title: '100 words!',
     body:  'You\'ve hit 100 contributions. That\'s a real impact on language preservation.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} just hit 100 ${lang} words on Thok! 🏆\n\nThis is what love for our language looks like. 100 words saved for our people forever. Don't let ${name} carry this alone — join them:\n\nBe part of it:`
-        : `I just hit 100 ${lang} words on Thok! 🏆\n\nThis is what love for our language looks like. 100 words saved for our people forever. Our elders are watching. Our children are waiting.\n\nBe part of it:`,
+    shareMessage: (lang) =>
+      `Hit 100 ${lang} words on Thok! 🗣️ Keeping our culture alive for the next generation. To my friends who claim they speak fluent ${lang} — I dare you to beat my score.`,
   },
   500: {
     emoji: '🦁',
     title: '500 words!',
     body:  'You are a true Guardian of the language. 500 words and counting.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} is a Guardian of the ${lang} language — 500 words contributed on Thok! 🦁\n\nHalf a thousand words saved. Our ancestors would be proud. Our language will not die on our watch. Will you join ${name}?\n\nContribute now:`
-        : `I am a Guardian of the ${lang} language — 500 words contributed on Thok! 🦁\n\nHalf a thousand words saved. Our ancestors would be proud. Our language will not die on our watch.\n\nContribute now:`,
+    shareMessage: (lang) =>
+      `500 words locked in on Thok. 🏆 Doing my part for our people. If you think you know your ${lang} mother tongue better than me, prove it on the app right now:`,
   },
   1000: {
     emoji: '👑',
     title: '1,000 words!',
     body:  'One thousand words. You are a legend of this project.',
-    shareMessage: (lang, name) =>
-      name
-        ? `${name} just contributed 1,000 ${lang} words on Thok! 👑\n\nOne thousand words. ${name} helped write a piece of our history. This is the kind of person our community needs. Are you ready to answer the call?\n\nStart here:`
-        : `I just contributed 1,000 ${lang} words on Thok! 👑\n\nOne thousand words saved for our people. I helped write a piece of our history. Our language will live on for our grandchildren.\n\nStart here:`,
+    shareMessage: (lang) =>
+      `1,000 ${lang} words on Thok! 🔥 Our language will never be lost. I challenge the entire diaspora to catch up with me. Let's build this together:`,
   },
 };
 
 export function MilestoneCelebration({ milestone, onDismiss }: Props) {
   const contributor = useAppStore(s => s.contributor);
-  const name        = contributor?.name;
   const langCode    = contributor?.language ?? 'dinka';
   const langName    = LANGUAGE_NAMES[langCode] ?? langCode;
 
@@ -86,28 +73,24 @@ export function MilestoneCelebration({ milestone, onDismiss }: Props) {
     emoji: '🎉',
     title: `${milestone} words!`,
     body:  'An incredible contribution to language preservation.',
-    shareMessage: (lang: string, n?: string) =>
-      n
-        ? `${n} just contributed ${milestone} ${lang} words on Thok! 🎉\n\nHelp preserve our language:`
-        : `I just contributed ${milestone} ${lang} words on Thok! 🎉\n\nHelp preserve our language:`,
+    shareMessage: (lang: string) =>
+      `I just contributed ${milestone} ${lang} words on Thok! 🎉 Help preserve our language:`,
   };
 
   const buildShareText = () => {
     const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://thok.app';
-    const msg    = info.shareMessage(langName, name);
-    return `${msg}\n${appUrl}`;
+    return `${info.shareMessage(langName)}\n${appUrl}`;
   };
 
   const shareToFacebook = () => {
     const appUrl = typeof window !== 'undefined' ? window.location.origin : 'https://thok.app';
-    const text   = info.shareMessage(langName, name);
+    const text   = info.shareMessage(langName);
     const url    = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'noopener,width=600,height=500');
   };
 
   const shareToWhatsApp = () => {
-    const text = buildShareText();
-    const url  = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(buildShareText())}`;
     window.open(url, '_blank', 'noopener');
   };
 
