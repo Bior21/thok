@@ -189,9 +189,9 @@ export default function HomePage() {
           <div className="text-left">
             <div className="text-sm font-medium text-gray-900">Start session</div>
             <div className="text-xs text-gray-500">
-              {totalContributions < 10
-                ? `${totalContributions}/10 words — ${10 - totalContributions} more to unlock reviews`
-                : 'Contribute words or review entries'
+              {totalContributions === 0
+                ? 'Start adding words and reviewing entries'
+                : `${totalContributions} contribution${totalContributions === 1 ? '' : 's'} — keep going`
               }
             </div>
           </div>

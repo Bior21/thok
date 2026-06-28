@@ -67,8 +67,9 @@ serve(async (req) => {
       .select('id', { count: 'exact', head: true })
       .eq('contributor_id', contributorId)
 
-    // Phase 1: fewer than 10 entries — always contribute.
-    if ((totalContributions ?? 0) < 10) {
+    // Phase 1: fewer than 3 entries — always contribute so the user builds
+    // context before seeing other people's work.
+    if ((totalContributions ?? 0) < 3) {
       const task = await buildContributeTask(supabase, contributorId)
       if (!task) return err(404, 'NO_TASKS_AVAILABLE', 'No concepts available. Add concepts in the admin panel.')
       return ok({ task_type: 'contribute', prompt: task, total_contributions: totalContributions ?? 0 })
