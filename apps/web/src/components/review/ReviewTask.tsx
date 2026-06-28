@@ -184,7 +184,7 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
               buttons={TEXT_BTNS}
               value={textVerdict}
               onChange={v => handleTextVerdict(v as TextVerdict)}
-              disabled={!hasPlayed}
+              disabled={false}
             />
           </div>
 
@@ -274,7 +274,7 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
 
           {!hasPlayed && (
             <p className="text-xs text-center text-gray-400">
-              Play the audio before judging
+              Play the audio to unlock audio verdict
             </p>
           )}
 
