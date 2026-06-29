@@ -1,0 +1,1978 @@
+[
+  {
+    "dinka": "Mioc ɣɛn kakiɛrou.",
+    "english": "Give me a little.",
+    "intent": "command",
+    "parent_concept": "a little",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Duk ɣa koon.",
+    "english": "Don't abandon me.",
+    "intent": "command",
+    "parent_concept": "abandon",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ba lëu?",
+    "english": "Will you be able to do it?",
+    "intent": "question",
+    "parent_concept": "able",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Cï puöu jal thïn.",
+    "english": "Aberration of the mind.",
+    "intent": "statement",
+    "parent_concept": "absent-minded",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "tënë yïn.",
+    "english": "I want a job from you.",
+    "intent": "statement",
+    "parent_concept": "absent-minded",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "alony thök.",
+    "english": "The boy is releasing the goats.",
+    "intent": "statement",
+    "parent_concept": "absolve",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acïe wɛ̈t du.",
+    "english": "It does not matter you.",
+    "intent": "statement",
+    "parent_concept": "advice",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "wɛ̈t (nɔŋ wɛ̈t )?",
+    "english": "Have you a message?",
+    "intent": "question",
+    "parent_concept": "advice",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "wɛ̈t bɛ̈ny.",
+    "english": "It is an order of the chief.",
+    "intent": "statement",
+    "parent_concept": "advice",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Cï lap bɛn bei?",
+    "english": "Did the afterbirth come off?",
+    "intent": "question",
+    "parent_concept": "after",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "lɔk bɛn.",
+    "english": "He came afterwards.",
+    "intent": "statement",
+    "parent_concept": "afterwards",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "ɣa yiɛk tarip.",
+    "english": "Give me at least a tarifa.",
+    "intent": "command",
+    "parent_concept": "although",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Tap acï lɔ kɔrɔm.",
+    "english": "The tabacco is very dry.",
+    "intent": "statement",
+    "parent_concept": "arid",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nhialic abaŋda.",
+    "english": "Our merciful God.",
+    "intent": "statement",
+    "parent_concept": "attendant",
+    "dialect": "SWj",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Gur ɣöt thok.",
+    "english": "Bar the room.",
+    "intent": "statement",
+    "parent_concept": "bar, lock",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Pialë?",
+    "english": "Are you well?",
+    "intent": "question",
+    "parent_concept": "enough! (stop pouring)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Meth acï tuany apɛi.",
+    "english": "The child is very sick.",
+    "intent": "statement",
+    "parent_concept": "whole amount. mat 18:34",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Arɛ̈k abï thok.",
+    "english": "Until it is finished.",
+    "intent": "statement",
+    "parent_concept": "become",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Tik acï gak.",
+    "english": "The woman has become sterile.",
+    "intent": "statement",
+    "parent_concept": "become",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Toŋ acï gal.",
+    "english": "The spear was bent.",
+    "intent": "statement",
+    "parent_concept": "bend",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Thony yïwum.",
+    "english": "Blow your nose.",
+    "intent": "statement",
+    "parent_concept": "blow",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï yɛc bei.",
+    "english": "A channel branches off (here).",
+    "intent": "statement",
+    "parent_concept": "branch off",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "ciɛndiɛ̈ nyacic.",
+    "english": "I squeezed my finger.",
+    "intent": "statement",
+    "parent_concept": "bruise",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "cuŋcuŋ.",
+    "english": "The cloth smells like burning.",
+    "intent": "statement",
+    "parent_concept": "burn",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "jɔgɔdiɛ̈.",
+    "english": "Carry my bag.",
+    "intent": "statement",
+    "parent_concept": "carry",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Det yïpuou.",
+    "english": "Cheer up!",
+    "intent": "exclamation",
+    "parent_concept": "cheer up",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Arëm atɔm.",
+    "english": "He eats groundnuts.",
+    "intent": "statement",
+    "parent_concept": "chew",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aril apɛi.",
+    "english": "The claw of a lion is very strong.",
+    "intent": "statement",
+    "parent_concept": "claw",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "piny tɛc.",
+    "english": "There is a colourful sunset.",
+    "intent": "statement",
+    "parent_concept": "colourful",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kajkë aberic.",
+    "english": "Stay in a row.",
+    "intent": "command",
+    "parent_concept": "column",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "bei ɣöt.",
+    "english": "The woman has left the hut.",
+    "intent": "statement",
+    "parent_concept": "come",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "from bï+kek] Bïk bɛn?",
+    "english": "Will they come?",
+    "intent": "question",
+    "parent_concept": "ku]",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "thööŋ.",
+    "english": "The ground has be leveled.",
+    "intent": "statement",
+    "parent_concept": "come suddenly",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "thol ëbɛ̈n.",
+    "english": "He has spent all the money.",
+    "intent": "statement",
+    "parent_concept": "consume",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Meth acï kuen.",
+    "english": "The child counted.",
+    "intent": "statement",
+    "parent_concept": "count",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aapur puɔ̈r.",
+    "english": "The people clean the road.",
+    "intent": "statement",
+    "parent_concept": "cultivation",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï kɔ̈u ŋot.",
+    "english": "I have a stiff back.",
+    "intent": "statement",
+    "parent_concept": "curdled milk",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "Deŋ acï lɔ̈ɔ r̈ dieer.",
+    "english": "Deng danced the dance.",
+    "intent": "statement",
+    "parent_concept": "dance",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Lɔ̈ɔ r̈ acï jɔt.",
+    "english": "A dance has started.",
+    "intent": "statement",
+    "parent_concept": "dance",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï nyin bɛn.",
+    "english": "The sun has risen.",
+    "intent": "statement",
+    "parent_concept": "day",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "aköl nɛɛn yaköl?",
+    "english": "What day is today?",
+    "intent": "question",
+    "parent_concept": "day",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Ye akölo kënë?",
+    "english": "What day is it today?",
+    "intent": "question",
+    "parent_concept": "day",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "manhdiɛ̈ wëŋ.",
+    "english": "Don't allure my child.",
+    "intent": "command",
+    "parent_concept": "death",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "thooŋ.",
+    "english": "The baby has diarrhoea.",
+    "intent": "statement",
+    "parent_concept": "have diarrhea?",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn anɛ̈k cɔk.",
+    "english": "I am hungry.",
+    "intent": "statement",
+    "parent_concept": "die (men, cattle, plants)",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "Acï riap cɔk.",
+    "english": "He died of hunger.",
+    "intent": "statement",
+    "parent_concept": "die (men, cattle, plants)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "mɛ̈n yïn ɣɛn?",
+    "english": "Why do you hate me?",
+    "intent": "question",
+    "parent_concept": "dislike",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "akut, akuɔ̈t -.",
+    "english": "Pl: akuut.",
+    "intent": "statement",
+    "parent_concept": "dung-heap",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Piny (akɔl) acï lɔ nyarnyar.",
+    "english": "It is twilight.",
+    "intent": "statement",
+    "parent_concept": "dusk",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kerac aliu thïn.",
+    "english": "There is nothing wrong.",
+    "intent": "statement",
+    "parent_concept": "evil",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kɔ̈k wor ëbɛ̈n.",
+    "english": "He outdistanced them all.",
+    "intent": "statement",
+    "parent_concept": "excel",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Luel wɛ̈t yic! Say the truth!",
+    "english": "Ee yic.",
+    "intent": "statement",
+    "parent_concept": "fact",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "weu bian tök.",
+    "english": "You will be fined 100 p.t.",
+    "intent": "statement",
+    "parent_concept": "fine (punishment)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Diɛt aacï par.",
+    "english": "The birds have flown away.",
+    "intent": "statement",
+    "parent_concept": "fly (insect)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Dit acï ̚ pär.",
+    "english": "The bird is not flying.",
+    "intent": "statement",
+    "parent_concept": "fly (insect)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nhialic atɔ̈ thïn.",
+    "english": "There is a God.",
+    "intent": "statement",
+    "parent_concept": "nhialic : god (hfi)",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Anyuööth.",
+    "english": "It is pasturing it.",
+    "intent": "statement",
+    "parent_concept": "graze",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn arëm yic.",
+    "english": "I have belly-ache.",
+    "intent": "statement",
+    "parent_concept": "have pains",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï bɛn.",
+    "english": "He has come.",
+    "intent": "statement",
+    "parent_concept": "he",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "ɣapuöu.",
+    "english": "I love you with my heart.",
+    "intent": "statement",
+    "parent_concept": "heart",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Puöu aliu thïn.",
+    "english": "Unwillingly.",
+    "intent": "statement",
+    "parent_concept": "heart",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "yiek ɣɛɛn.",
+    "english": "You hate me.",
+    "intent": "statement",
+    "parent_concept": "heart",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "[ Gram: possessed] Piändiɛ̈ atɔ̈ thïn.",
+    "english": "I agree.",
+    "intent": "statement",
+    "parent_concept": "heart",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acïï piou nɔk.",
+    "english": "I doubt.",
+    "intent": "statement",
+    "parent_concept": "heart",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Ɣɛn anɛk aret.",
+    "english": "I have heartburn..",
+    "intent": "statement",
+    "parent_concept": "heart-burn",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kuɔnykë ɣɛn!",
+    "english": "Help me!",
+    "intent": "exclamation",
+    "parent_concept": "help",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acaa tek wɛ̈t kuny.",
+    "english": "The chief absolved me.",
+    "intent": "statement",
+    "parent_concept": "help",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kok atiiŋ.",
+    "english": "He is a good shot.",
+    "intent": "statement",
+    "parent_concept": "hit",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣäthë thök bei.",
+    "english": "Take the goats home..",
+    "intent": "command",
+    "parent_concept": "home",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Jɔk, lɔr biɔ̈r!",
+    "english": "Devil, go to hell!",
+    "intent": "exclamation",
+    "parent_concept": "hot",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "apɛi yaköl.",
+    "english": "It is very hot today.",
+    "intent": "statement",
+    "parent_concept": "case of dismay]",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk ɣa näk.",
+    "english": "Don't hurt me.",
+    "intent": "command",
+    "parent_concept": "hurt",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn arɛɛr ne.",
+    "english": "I stay here.",
+    "intent": "statement",
+    "parent_concept": "present?",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "piɛŋ See: piŋ.",
+    "english": "SWr v. I hear.",
+    "intent": "statement",
+    "parent_concept": "present?",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yïn acï cal Wau.",
+    "english": "You are called to Wau.",
+    "intent": "statement",
+    "parent_concept": "invite",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Wëu aaliu tënë ɣɛn.",
+    "english": "I have no money.",
+    "intent": "statement",
+    "parent_concept": "makua : iron (hfi)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk rɔt mony.",
+    "english": "Don't hide yourself.",
+    "intent": "command",
+    "parent_concept": "keep",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nuen ayup apɛi.",
+    "english": "Knead the dough well.",
+    "intent": "statement",
+    "parent_concept": "knead bread",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "mɛnh amääl SC lamb.",
+    "english": "Lit: child sheep.",
+    "intent": "statement",
+    "parent_concept": "lamb",
+    "dialect": "SC",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "[Gram: 2SG] Atɔŋ.",
+    "english": "He is lighting it (sc.",
+    "intent": "statement",
+    "parent_concept": "light fire",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn apuɔl guop.",
+    "english": "I am well.",
+    "intent": "statement",
+    "parent_concept": "lightness",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "dhiau wënakɔ̈u.",
+    "english": "A lion roared last night.",
+    "intent": "statement",
+    "parent_concept": "lion",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "nuaŋnuaŋ.",
+    "english": "Lose the sight.",
+    "intent": "statement",
+    "parent_concept": "lose",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk cɔl amar.",
+    "english": "Don't let it be lost.",
+    "intent": "command",
+    "parent_concept": "lost",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nhiäär e kënë.",
+    "english": "Do you love it?",
+    "intent": "question",
+    "parent_concept": "love",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Acï muöl ë mɔu.",
+    "english": "He got drunk with beer.",
+    "intent": "statement",
+    "parent_concept": "mad-",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "wɛ̈ɛ r̈ Pl: wɛ̈r.",
+    "english": "NEd SWr SCa SEb n.",
+    "intent": "statement",
+    "parent_concept": "manure (a field)",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "maŋok dɔm.",
+    "english": "The child got miningitis.",
+    "intent": "statement",
+    "parent_concept": "meningitis",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Bï bɛn?",
+    "english": "Will he come?",
+    "intent": "question",
+    "parent_concept": "might (possibly)",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "këdiɛ̈ mine, my property.",
+    "english": "Lit: thing-1SG.",
+    "intent": "statement",
+    "parent_concept": "mine",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Man atɔ̈ thïn.",
+    "english": "He has (still) a mother.",
+    "intent": "statement",
+    "parent_concept": "mother",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "see it? Akɛc tiŋ.",
+    "english": "I did not see it.",
+    "intent": "statement",
+    "parent_concept": "understand well",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "të thin nyöt.",
+    "english": "There remained only a little.",
+    "intent": "statement",
+    "parent_concept": "only",
+    "dialect": "SWt",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "adhil tënë ɣɛn.",
+    "english": "It belongs to me.",
+    "intent": "statement",
+    "parent_concept": "own",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Naŋ këcam?",
+    "english": "Is there some food?",
+    "intent": "question",
+    "parent_concept": "possess",
+    "dialect": "SWm",
+    "region_state": "Northern Bahr el Ghazal"
+  },
+  {
+    "dinka": "Lɛcdu acuk piŋ.",
+    "english": "Your fame reached us.",
+    "intent": "statement",
+    "parent_concept": "praise",
+    "dialect": "SC",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "Amany bɛ̈ny.",
+    "english": "He sings to praise the chief.",
+    "intent": "statement",
+    "parent_concept": "thank-you. (i praise you.)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yen adir ɣɛn.",
+    "english": "I am sorry for it.",
+    "intent": "statement",
+    "parent_concept": "regret",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Lɔk yïnyin.",
+    "english": "Wash your face.",
+    "intent": "statement",
+    "parent_concept": "rinse",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï luɔk.",
+    "english": "The durra is ripe.",
+    "intent": "statement",
+    "parent_concept": "ripen",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "rap apɛi.",
+    "english": "The field yielded a good crop.",
+    "intent": "statement",
+    "parent_concept": "ripen",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk kiny yïnyin.",
+    "english": "Don't rub your eye.",
+    "intent": "command",
+    "parent_concept": "rub",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Caath piny ɣöt ic.",
+    "english": "Search in a place (hut).",
+    "intent": "statement",
+    "parent_concept": "scrutiny",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "awïc luoi tënë yïn.",
+    "english": "I want a job from you.",
+    "intent": "statement",
+    "parent_concept": "search",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yïn aba luɔ̈m thok.",
+    "english": "I shall tell you a secret.",
+    "intent": "statement",
+    "parent_concept": "secret",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "tuɔc yïn.",
+    "english": "My father has sent me to you.",
+    "intent": "statement",
+    "parent_concept": "send",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk luɛk!",
+    "english": "Don't move it!",
+    "intent": "exclamation",
+    "parent_concept": "shake",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn acï diɛt moc.",
+    "english": "I shot some fowl.",
+    "intent": "statement",
+    "parent_concept": "shoot",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Tetokdiɛ̈ acï dɛm.",
+    "english": "My wound is healed.",
+    "intent": "statement",
+    "parent_concept": "sore",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "pakiër ŋo?",
+    "english": "What clan does he belong to?",
+    "intent": "question",
+    "parent_concept": "sort",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Niɛn yïnyin.",
+    "english": "Shut your eyes.",
+    "intent": "statement",
+    "parent_concept": "it!. [ gram: 2sg]",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk cuëër!",
+    "english": "Don't steal!",
+    "intent": "exclamation",
+    "parent_concept": "steal",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acaa riɛl puou.",
+    "english": "You encouraged me.",
+    "intent": "statement",
+    "parent_concept": "strong",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï riɛl.",
+    "english": "The grass is dry.",
+    "intent": "statement",
+    "parent_concept": "strong",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ker ɣöt yic.",
+    "english": "Make a circle for a hut.",
+    "intent": "statement",
+    "parent_concept": "surround",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn amït puöu.",
+    "english": "I am happy.",
+    "intent": "statement",
+    "parent_concept": "swallow (bird)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ŋic kuaŋ?",
+    "english": "Can you swim?",
+    "intent": "question",
+    "parent_concept": "swim",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "rɔt lɛŋ.",
+    "english": "The canoe is tossing.",
+    "intent": "statement",
+    "parent_concept": "swing",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ee raan kɔc miem.",
+    "english": "He is a taciturn fellow.",
+    "intent": "statement",
+    "parent_concept": "taciturn",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Biok acï lut.",
+    "english": "The hide is red tanned.",
+    "intent": "statement",
+    "parent_concept": "tanning a hide",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣöth ɣɛn.",
+    "english": "Pull out my tooth.",
+    "intent": "statement",
+    "parent_concept": "dead, dark tooth",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ca ke tïŋ?",
+    "english": "Did you see them?",
+    "intent": "question",
+    "parent_concept": "them",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "aluel ee köör.",
+    "english": "And I thought it was a lion.",
+    "intent": "statement",
+    "parent_concept": "puou think about; take courage",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Kɔc aacï lueel këlä.",
+    "english": "The people said so.",
+    "intent": "statement",
+    "parent_concept": "puou think about; take courage",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Dëŋ acï mär.",
+    "english": "It has thundered.",
+    "intent": "statement",
+    "parent_concept": "thunder",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "nɛɛn yaköl?",
+    "english": "What day is today?",
+    "intent": "question",
+    "parent_concept": "today",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "(akɔl) acï lɔ nyarnyar.",
+    "english": "It is twilight.",
+    "intent": "statement",
+    "parent_concept": "twilight",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Cathë.",
+    "english": "Walk! (2S).",
+    "intent": "statement",
+    "parent_concept": "walk",
+    "dialect": "SW",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nya alök.",
+    "english": "The girl is washing.",
+    "intent": "statement",
+    "parent_concept": "wash",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Abuk tiŋ.",
+    "english": "We shall see.",
+    "intent": "statement",
+    "parent_concept": "we",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Weeth acï piir.",
+    "english": "The metal has been welded.",
+    "intent": "statement",
+    "parent_concept": "weld",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Bï bɛ̈n nɛn?",
+    "english": "When will he come?",
+    "intent": "question",
+    "parent_concept": "when?",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "Raan nɛn?",
+    "english": "What person? *Who?",
+    "intent": "question",
+    "parent_concept": "when?",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "acaa gɔi.",
+    "english": "Such a thing made me wonder.",
+    "intent": "statement",
+    "parent_concept": "wonder",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn acï gät wa.",
+    "english": "I wrote my father.",
+    "intent": "statement",
+    "parent_concept": "write to someone",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Jälkä!",
+    "english": "You-all leave!.",
+    "intent": "statement",
+    "parent_concept": "yellow",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "wenhïïm.",
+    "english": "It is in front of you.",
+    "intent": "statement",
+    "parent_concept": "yellow",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "magoŋ SWr n.",
+    "english": "Agar dance.",
+    "intent": "statement",
+    "parent_concept": "agar dance",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aa riɛ̈c.",
+    "english": "They are the same age.",
+    "intent": "statement",
+    "parent_concept": "age group",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "rïnydiɛ̈.",
+    "english": "You are of my age.",
+    "intent": "statement",
+    "parent_concept": "age group",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Raan ariɔk.",
+    "english": "The man is very ill.",
+    "intent": "statement",
+    "parent_concept": "agony",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "etɛ̈ɛ n̈.",
+    "english": "The man has given a cow here.",
+    "intent": "statement",
+    "parent_concept": "agree",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï rɔt nɔk.",
+    "english": "He killed himself.",
+    "intent": "statement",
+    "parent_concept": "alone",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Acï bɛn bɛ̈n.",
+    "english": "He came again.",
+    "intent": "statement",
+    "parent_concept": "any more",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï jäl bɛn.",
+    "english": "He came at last.",
+    "intent": "statement",
+    "parent_concept": "east",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "dhölë! Avoid!",
+    "english": "Shun this way!",
+    "intent": "exclamation",
+    "parent_concept": "avoid",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "wei ɣal.",
+    "english": "An antelope fell into the trap.",
+    "intent": "statement",
+    "parent_concept": "away from",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kɔc rɛc.",
+    "english": "You are bad people.",
+    "intent": "statement",
+    "parent_concept": "adze",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yen akïn.",
+    "english": "Here it is.",
+    "intent": "statement",
+    "parent_concept": "bathe",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn acï kuɛth.",
+    "english": "I am fed up.",
+    "intent": "statement",
+    "parent_concept": "bathe",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ala weŋ path apɛi.",
+    "english": "He has a very nice cow.",
+    "intent": "statement",
+    "parent_concept": "bathe",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Ɣɛn acï nhom maar.",
+    "english": "I forgot.",
+    "intent": "statement",
+    "parent_concept": "bathe",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "adhiɛl ɣɛn.",
+    "english": "It belongs to me.",
+    "intent": "statement",
+    "parent_concept": "belong",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï kɛc.",
+    "english": "It has become *bitter.",
+    "intent": "statement",
+    "parent_concept": "bitter (taste)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Piny acï cuɔl.",
+    "english": "It has become dark.",
+    "intent": "statement",
+    "parent_concept": "black",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aala riɛm.",
+    "english": "The people have a blood-feud.",
+    "intent": "statement",
+    "parent_concept": "blood",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï puɔr nhom.",
+    "english": "The pot started to boil.",
+    "intent": "statement",
+    "parent_concept": "boil (water)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yup (gut) löth.",
+    "english": "Ring the bell.",
+    "intent": "statement",
+    "parent_concept": "cattle bell",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "meth ëpath.",
+    "english": "You are only a child.",
+    "intent": "statement",
+    "parent_concept": "child",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aacï kenhiim dɛny.",
+    "english": "They collided.",
+    "intent": "statement",
+    "parent_concept": "collide",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ye maker ŋö?",
+    "english": "Of what colour is it?",
+    "intent": "question",
+    "parent_concept": "colour of animal",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï yiɛth.",
+    "english": "The cow has been covered.",
+    "intent": "statement",
+    "parent_concept": "cover (mate - animals)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "dɔm cök.",
+    "english": "I got cramp in a leg.",
+    "intent": "statement",
+    "parent_concept": "cramp, (of muscle)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kɔc aatul kiɛu.",
+    "english": "The people are shouting.",
+    "intent": "statement",
+    "parent_concept": "cry of alarm",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Akɔ̈l acï nyin bɛn.",
+    "english": "The sun has risen.",
+    "intent": "statement",
+    "parent_concept": "dawn",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Piny acï lɔ wany.",
+    "english": "It dawns.",
+    "intent": "statement",
+    "parent_concept": "dawn",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "aluɛŋ.",
+    "english": "The sorcerer deceives the people.",
+    "intent": "statement",
+    "parent_concept": "deceive",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Muor acï tɛɛŋ.",
+    "english": "The bull is full-grown.",
+    "intent": "statement",
+    "parent_concept": "develop (e.g leaves opening)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï rïŋ cuet.",
+    "english": "He has eaten meat.",
+    "intent": "statement",
+    "parent_concept": "devour",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï guɔ la dum.",
+    "english": "He disappeared.",
+    "intent": "statement",
+    "parent_concept": "disappear",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Piɛr tën.",
+    "english": "Throw here.",
+    "intent": "statement",
+    "parent_concept": "discard",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "tɛk wɛt luny.",
+    "english": "The chief absolved me.",
+    "intent": "statement",
+    "parent_concept": "distribute",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk ɣa juɛc.",
+    "english": "Don't hold me..",
+    "intent": "command",
+    "parent_concept": "don't!",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "wënakɔ̈u.",
+    "english": "I was dreaming much last night.",
+    "intent": "statement",
+    "parent_concept": "dream",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Dhɔ̈k acɛ̈m.",
+    "english": "The boy is eating.",
+    "intent": "statement",
+    "parent_concept": "eat",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "cï mac acï lɔ thur bei.",
+    "english": "The prisoner evaded.",
+    "intent": "statement",
+    "parent_concept": "enunciate",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Adhɛ̈ŋ aŋaan-aŋan.",
+    "english": "The youth is exercising..",
+    "intent": "statement",
+    "parent_concept": "exercise",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï löny tim nhom.",
+    "english": "He fell from a tree.",
+    "intent": "statement",
+    "parent_concept": "fall",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Thioŋ tony ic.",
+    "english": "Fill up the pot.",
+    "intent": "statement",
+    "parent_concept": "fill",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Mei acï jɔt.",
+    "english": "The fishing has started.",
+    "intent": "statement",
+    "parent_concept": "fishing",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kɔc ŋuaan.",
+    "english": "He forgives.",
+    "intent": "statement",
+    "parent_concept": "forgive",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "War acï thiäŋ.",
+    "english": "The river is full.",
+    "intent": "statement",
+    "parent_concept": "full",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kut ɣöndiɛ̈ yic.",
+    "english": "Sweep my room.",
+    "intent": "statement",
+    "parent_concept": "gather",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "wal yekök.",
+    "english": "He carries an amulet at his arm.",
+    "intent": "statement",
+    "parent_concept": "grass",
+    "dialect": "SE",
+    "region_state": "Jonglei State"
+  },
+  {
+    "dinka": "bɛ̈n ydït.",
+    "english": "Greet the chief.",
+    "intent": "statement",
+    "parent_concept": "greet",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acaa muɔ̈t h.",
+    "english": "The child has greeted me.",
+    "intent": "statement",
+    "parent_concept": "greet",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acuk piŋ.",
+    "english": "We heard it.",
+    "intent": "statement",
+    "parent_concept": "have",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "from acḯ-kek] Acïk ŋic.",
+    "english": "They knew it.",
+    "intent": "statement",
+    "parent_concept": "have",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "-ŋɔth / ŋɔɔth v.",
+    "english": "SWr hope.",
+    "intent": "statement",
+    "parent_concept": "hope",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ye ŋa?",
+    "english": "Who is it?",
+    "intent": "question",
+    "parent_concept": "da? where has he gone?",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "yïn ŋa?",
+    "english": "How are you called?",
+    "intent": "question",
+    "parent_concept": "da? where has he gone?",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn anɛk cɔk.",
+    "english": "I am hungry.",
+    "intent": "statement",
+    "parent_concept": "hunger",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "metoŋë.",
+    "english": "I shall return in a moment.",
+    "intent": "statement",
+    "parent_concept": "in a moment",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "buk NE SEb See: bï.",
+    "english": "SW Sg: ba. conj.",
+    "intent": "statement",
+    "parent_concept": "in my needs",
+    "dialect": "NE",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "ba SWr See: bï.",
+    "english": "Pl: buk. conj. in order that I.",
+    "intent": "statement",
+    "parent_concept": "in my needs",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï jaal acɔɔt.",
+    "english": "He set out without food.",
+    "intent": "statement",
+    "parent_concept": "inconsiderate",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kɔc wöny.",
+    "english": "It is a contagious disease.",
+    "intent": "statement",
+    "parent_concept": "infect",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Duk jamdï lekic.",
+    "english": "Don't interrupt my speech.",
+    "intent": "command",
+    "parent_concept": "interrupt",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "wel kɔc wuth ic.",
+    "english": "Don't interrupt the people.",
+    "intent": "command",
+    "parent_concept": "interrupt",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Tak yïnhom!",
+    "english": "Remember!",
+    "intent": "exclamation",
+    "parent_concept": "invent",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ee lɛ̈i.",
+    "english": "It is an antelope.",
+    "intent": "statement",
+    "parent_concept": "it gets light",
+    "dialect": "SWj",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "[ Gram: 2SG] Atɔŋ.",
+    "english": "He is lighting it (sc.",
+    "intent": "statement",
+    "parent_concept": "kindle fire",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï dïït.",
+    "english": "It is late in the night.",
+    "intent": "statement",
+    "parent_concept": "late at night",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "dhuɔl yïn.",
+    "english": "Your work ???.",
+    "intent": "statement",
+    "parent_concept": "lend",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kaŋ looi këlä.",
+    "english": "You will do it thus.",
+    "intent": "statement",
+    "parent_concept": "lift (pick up)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ayin abï bɛn.",
+    "english": "Perhaps he will come.",
+    "intent": "statement",
+    "parent_concept": "likely",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kede e nhiëër.",
+    "english": "Is (it) love?",
+    "intent": "question",
+    "parent_concept": "loose",
+    "dialect": "NEb",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "Yïn acï woc.",
+    "english": "You are wrong.",
+    "intent": "statement",
+    "parent_concept": "make",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Nya arɔk.",
+    "english": "The girl is milking.",
+    "intent": "statement",
+    "parent_concept": "microscope",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "lɔk ɣol.",
+    "english": "Mince the tobacco to pound it then.",
+    "intent": "statement",
+    "parent_concept": "mince",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Rot cuɔ̈t wei.",
+    "english": "Go away, be off!",
+    "intent": "exclamation",
+    "parent_concept": "move",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "riɛt ɣöt.",
+    "english": "He has been shut into a room.",
+    "intent": "statement",
+    "parent_concept": "move",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Baai athiɔk.",
+    "english": "The village is near.",
+    "intent": "statement",
+    "parent_concept": "near",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yïn nuɛk niin?",
+    "english": "Are you dozing?",
+    "intent": "question",
+    "parent_concept": "nuaknuak morph: cath nuaknuak. swr",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "mony dït old man.",
+    "english": "Lit: man.QL elder.",
+    "intent": "statement",
+    "parent_concept": "old",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï mïth kadiäk baar.",
+    "english": "She left 3 orphans..",
+    "intent": "statement",
+    "parent_concept": "orphan",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "war acï tɔk aɣer.",
+    "english": "The river has overflowed.",
+    "intent": "statement",
+    "parent_concept": "overflow",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣöt aɣör thok.",
+    "english": "The room is open.",
+    "intent": "statement",
+    "parent_concept": "perforate",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "ɣör kɔ̈u.",
+    "english": "The wall has been perforated.",
+    "intent": "statement",
+    "parent_concept": "perforate",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Aariäŋ.",
+    "english": "They are playing.",
+    "intent": "statement",
+    "parent_concept": "play",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Geth wai tɔŋ.",
+    "english": "Polish the spear shaft..",
+    "intent": "statement",
+    "parent_concept": "polish",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "aba ciet abaŋ aʼut.",
+    "english": "Treat me like a princess.",
+    "intent": "statement",
+    "parent_concept": "princess",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "lac vn: lɔclɔc.",
+    "english": "SWr v. quickly, soon.",
+    "intent": "statement",
+    "parent_concept": "quickly",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Dëŋ acï bir.",
+    "english": "It has flashed.",
+    "intent": "statement",
+    "parent_concept": "quiver (shake)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kuiɛl Variant: kuɛɛl.",
+    "english": "SWr n. rope of hide.",
+    "intent": "statement",
+    "parent_concept": "rope",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Alath acï cuɔr.",
+    "english": "The cloth is worn out.",
+    "intent": "statement",
+    "parent_concept": "rot",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Meth acï riŋ.",
+    "english": "The child has run.",
+    "intent": "statement",
+    "parent_concept": "run",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Abak tïŋ.",
+    "english": "You shall see.",
+    "intent": "statement",
+    "parent_concept": "shall",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "kɔc thoŋ?",
+    "english": "It is a poisonous snake?",
+    "intent": "question",
+    "parent_concept": "snake",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Yïn ŋɛk.",
+    "english": "You fellow.",
+    "intent": "statement",
+    "parent_concept": "somebody",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "Jɔŋdïït SE n.",
+    "english": "Spirit (of God).",
+    "intent": "statement",
+    "parent_concept": "spirit",
+    "dialect": "SE",
+    "region_state": "Jonglei State"
+  },
+  {
+    "dinka": "acï pïu ŋuɔɔt.",
+    "english": "Deng has spit the water.",
+    "intent": "statement",
+    "parent_concept": "spit",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn amal tën.",
+    "english": "I am remaining here.",
+    "intent": "statement",
+    "parent_concept": "stay",
+    "dialect": "SCa",
+    "region_state": "Lakes State"
+  },
+  {
+    "dinka": "cötcöt See: cöt.",
+    "english": "SWr n. big stick.",
+    "intent": "statement",
+    "parent_concept": "stick (wood)",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Kiɛth acaa jiŋ.",
+    "english": "A scorpion stung me.",
+    "intent": "statement",
+    "parent_concept": "sting",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn acï kɔ̈t h alɛl.",
+    "english": "I stumbled over a stone.",
+    "intent": "statement",
+    "parent_concept": "stumble",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "nyin bɛn.",
+    "english": "The sun has risen.",
+    "intent": "statement",
+    "parent_concept": "sun",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "from kek+abï] Abïk tïŋ.",
+    "english": "They will see it.",
+    "intent": "statement",
+    "parent_concept": "they",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Emɛnemɛn!",
+    "english": "Just now!",
+    "intent": "exclamation",
+    "parent_concept": "throw",
+    "dialect": "NWr",
+    "region_state": "Unity State"
+  },
+  {
+    "dinka": "raan nɔk lucluc.",
+    "english": "He suffered torment.",
+    "intent": "statement",
+    "parent_concept": "torment",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Ɣɛn cï bec.",
+    "english": "I feel unwell.",
+    "intent": "statement",
+    "parent_concept": "unwell",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "acï pïu ŋɔ̈k.",
+    "english": "Deng vomited the water.",
+    "intent": "statement",
+    "parent_concept": "vomit",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Tɔŋ acï duony.",
+    "english": "The war was lost.",
+    "intent": "statement",
+    "parent_concept": "war",
+    "dialect": "NEd",
+    "region_state": "Upper Nile State"
+  },
+  {
+    "dinka": "aawak yöu tɔŋ.",
+    "english": "The people sing a war song.",
+    "intent": "statement",
+    "parent_concept": "war",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Abï bɛn.",
+    "english": "He will come.",
+    "intent": "statement",
+    "parent_concept": "will",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Acï lek ë toŋ.",
+    "english": "He was stabbed with a spear.",
+    "intent": "statement",
+    "parent_concept": "with",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  },
+  {
+    "dinka": "Aruɛɛt.",
+    "english": "I am zipping it up.",
+    "intent": "statement",
+    "parent_concept": "zip",
+    "dialect": "SWr",
+    "region_state": "Warrap State"
+  }
+]
