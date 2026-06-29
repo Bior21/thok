@@ -1,15 +1,5 @@
 [
   {
-    "english": "a",
-    "entries": [
-      {
-        "dinka_word": "tök",
-        "dialect": "NEd",
-        "region_state": "Upper Nile State"
-      }
-    ]
-  },
-  {
     "english": "a little",
     "entries": [
       {
@@ -20,7 +10,7 @@
     ]
   },
   {
-    "english": "a stiff neck?",
+    "english": "a stiff neck",
     "entries": [
       {
         "dinka_word": "ritrit",
@@ -1895,7 +1885,7 @@
     ]
   },
   {
-    "english": "am i tall?",
+    "english": "am i tall",
     "entries": [
       {
         "dinka_word": "bär",
@@ -4745,7 +4735,7 @@
     ]
   },
   {
-    "english": "been left over?",
+    "english": "been left over",
     "entries": [
       {
         "dinka_word": "rɛ̈n",
@@ -9815,7 +9805,7 @@
     ]
   },
   {
-    "english": "clan is he?",
+    "english": "clan is he",
     "entries": [
       {
         "dinka_word": "rup",
@@ -13400,7 +13390,7 @@
     ]
   },
   {
-    "english": "da? where has he gone?",
+    "english": "da? where has he gone",
     "entries": [
       {
         "dinka_word": "de",
@@ -14700,7 +14690,7 @@
     ]
   },
   {
-    "english": "did..?",
+    "english": "did..",
     "entries": [
       {
         "dinka_word": "cäk",
@@ -15700,7 +15690,7 @@
     ]
   },
   {
-    "english": "do you…?",
+    "english": "do you…",
     "entries": [
       {
         "dinka_word": "cak",
@@ -25585,7 +25575,7 @@
     ]
   },
   {
-    "english": "have diarrhea?",
+    "english": "have diarrhea",
     "entries": [
       {
         "dinka_word": "anyidol",
@@ -26850,7 +26840,7 @@
     ]
   },
   {
-    "english": "hitting it?",
+    "english": "hitting it",
     "entries": [
       {
         "dinka_word": "tiŋ",
@@ -27035,7 +27025,7 @@
     ]
   },
   {
-    "english": "home?",
+    "english": "home",
     "entries": [
       {
         "dinka_word": "pɛth",
@@ -27525,7 +27515,7 @@
     ]
   },
   {
-    "english": "how?",
+    "english": "how",
     "entries": [
       {
         "dinka_word": "da",
@@ -27914,31 +27904,6 @@
       },
       {
         "dinka_word": "aarɛɛr",
-        "dialect": null,
-        "region_state": "Warrap State"
-      }
-    ]
-  },
-  {
-    "english": "i",
-    "entries": [
-      {
-        "dinka_word": "an",
-        "dialect": "SWr",
-        "region_state": "Warrap State"
-      },
-      {
-        "dinka_word": "akɛc",
-        "dialect": null,
-        "region_state": "Warrap State"
-      },
-      {
-        "dinka_word": "ɣɛn+akec]",
-        "dialect": null,
-        "region_state": "Warrap State"
-      },
-      {
-        "dinka_word": "cä",
         "dialect": null,
         "region_state": "Warrap State"
       }
@@ -36185,7 +36150,7 @@
     ]
   },
   {
-    "english": "name?",
+    "english": "name",
     "entries": [
       {
         "dinka_word": "gɔk",
@@ -36780,7 +36745,7 @@
     ]
   },
   {
-    "english": "no? what country?",
+    "english": "no? what country",
     "entries": [
       {
         "dinka_word": "nou",
@@ -37045,7 +37010,7 @@
     ]
   },
   {
-    "english": "not go?",
+    "english": "not go",
     "entries": [
       {
         "dinka_word": "ɣodhiɛ̈",
@@ -37215,7 +37180,7 @@
     ]
   },
   {
-    "english": "nou? what country?",
+    "english": "nou? what country",
     "entries": [
       {
         "dinka_word": "ŋö",
@@ -40060,7 +40025,7 @@
     ]
   },
   {
-    "english": "person? *who?",
+    "english": "person? *who",
     "entries": [
       {
         "dinka_word": "no",
@@ -41860,7 +41825,7 @@
     ]
   },
   {
-    "english": "present?",
+    "english": "present",
     "entries": [
       {
         "dinka_word": "ɣɛn",
@@ -47380,7 +47345,7 @@
     ]
   },
   {
-    "english": "shall we…?",
+    "english": "shall we…",
     "entries": [
       {
         "dinka_word": "buk",
@@ -55035,7 +55000,7 @@
     ]
   },
   {
-    "english": "things shall i get?",
+    "english": "things shall i get",
     "entries": [
       {
         "dinka_word": "wuɔdä",
@@ -59770,7 +59735,7 @@
     ]
   },
   {
-    "english": "what people?",
+    "english": "what people",
     "entries": [
       {
         "dinka_word": "roar",
@@ -59790,7 +59755,7 @@
     ]
   },
   {
-    "english": "what?",
+    "english": "what",
     "entries": [
       {
         "dinka_word": "da",
@@ -59840,7 +59805,7 @@
     ]
   },
   {
-    "english": "when?",
+    "english": "when",
     "entries": [
       {
         "dinka_word": "nɛn",
@@ -59880,7 +59845,7 @@
     ]
   },
   {
-    "english": "where?",
+    "english": "where",
     "entries": [
       {
         "dinka_word": "ako",
@@ -60080,7 +60045,7 @@
     ]
   },
   {
-    "english": "who?",
+    "english": "who",
     "entries": [
       {
         "dinka_word": "ŋa",
@@ -60160,7 +60125,7 @@
     ]
   },
   {
-    "english": "whom shall we blame?",
+    "english": "whom shall we blame",
     "entries": [
       {
         "dinka_word": "gɔr",
@@ -60200,7 +60165,7 @@
     ]
   },
   {
-    "english": "why are you insulting me?",
+    "english": "why are you insulting me",
     "entries": [
       {
         "dinka_word": "yïndë",
@@ -60235,7 +60200,7 @@
     ]
   },
   {
-    "english": "why?",
+    "english": "why",
     "entries": [
       {
         "dinka_word": "yeŋö",
@@ -61805,7 +61770,7 @@
     ]
   },
   {
-    "english": "you see them?",
+    "english": "you see them",
     "entries": [
       {
         "dinka_word": "-kë",
