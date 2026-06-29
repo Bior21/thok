@@ -39,7 +39,7 @@ const CORS = {
 }
 
 const VALID_TEXT_VERDICTS  = ['correct', 'valid_variant', 'wrong_word']
-const VALID_AUDIO_VERDICTS = ['correct', 'valid_variant', 'bad_audio']
+const VALID_AUDIO_VERDICTS = ['correct', 'valid_variant', 'bad_audio', 'no_audio']
 const VALID_WRONG_TYPES    = ['wrong_spelling', 'wrong_word']
 
 serve(async (req) => {
@@ -58,14 +58,19 @@ serve(async (req) => {
       text_verdict,
       wrong_type,
       text_correction,
-      audio_verdict,
+      audio_verdict: raw_audio_verdict,
       will_upload_audio = false,
     } = body
 
+    // Seed entries have no audio to judge — the client sends null.
+    // Normalise to 'no_audio' so downstream logic has a consistent value.
+    const audio_verdict = raw_audio_verdict ?? 'no_audio'
+    const isSeedReview  = !raw_audio_verdict
+
     // ── Input validation ──────────────────────────────────────────────────────
 
-    if (!entry_id || !affinity_tier || !text_verdict || !audio_verdict)
-      return err(400, 'MISSING_FIELDS', 'entry_id, affinity_tier, text_verdict, and audio_verdict are required.')
+    if (!entry_id || !affinity_tier || !text_verdict)
+      return err(400, 'MISSING_FIELDS', 'entry_id, affinity_tier, and text_verdict are required.')
 
     if (!VALID_TEXT_VERDICTS.includes(text_verdict))
       return err(400, 'INVALID_TEXT_VERDICT', `text_verdict must be one of: ${VALID_TEXT_VERDICTS.join(', ')}`)
@@ -110,6 +115,8 @@ serve(async (req) => {
 
     const tier = Number(affinity_tier)
 
+    // Look up score weights. For seed reviews, skip the audio dimension entirely
+    // since there is no audio to judge — audioScoreDelta stays at 0.
     const [{ data: textWeight }, { data: audioWeight }] = await Promise.all([
       supabase
         .from('affinity_score_weights')
@@ -118,13 +125,15 @@ serve(async (req) => {
         .eq('verdict', text_verdict)
         .eq('dimension', 'text')
         .single(),
-      supabase
-        .from('affinity_score_weights')
-        .select('score_delta')
-        .eq('affinity_tier', tier)
-        .eq('verdict', audio_verdict)
-        .eq('dimension', 'audio')
-        .single(),
+      isSeedReview
+        ? Promise.resolve({ data: null })
+        : supabase
+            .from('affinity_score_weights')
+            .select('score_delta')
+            .eq('affinity_tier', tier)
+            .eq('verdict', audio_verdict)
+            .eq('dimension', 'audio')
+            .single(),
     ])
 
     const textScoreDelta  = textWeight?.score_delta  ?? 0
@@ -165,8 +174,12 @@ serve(async (req) => {
     // Create when: reviewer gave a corrected word (text_correction field), OR
     // they flagged bad audio and said they will upload a new recording.
 
-    const hasTextCorrection    = text_verdict === 'wrong_word' && text_correction?.trim()
-    const shouldCreateCorrection = hasTextCorrection || (audio_verdict === 'bad_audio' && will_upload_audio)
+    const hasTextCorrection = text_verdict === 'wrong_word' && text_correction?.trim()
+    // For seed entries: create a correction entry whenever the reviewer is uploading
+    // audio (regardless of audio_verdict which is absent). This attributes the
+    // first recording of a dictionary word to the reviewer who recorded it.
+    // For regular entries: only create when audio was flagged as bad + re-recorded.
+    const shouldCreateCorrection = hasTextCorrection || will_upload_audio
 
     let correctionEntryId: string | null = null
 
@@ -237,10 +250,13 @@ serve(async (req) => {
  * Collapses the two-dimensional verdict into a single legacy value.
  * The legacy column is required by existing schema constraints and
  * may be used by older reporting queries.
+ *
+ * 'no_audio' is treated as neutral — the text verdict alone determines the outcome.
  */
 function deriveLegacyVerdict(textVerdict: string, audioVerdict: string): string {
-  if (textVerdict === 'wrong_word' || audioVerdict === 'bad_audio') return 'incorrect'
-  if (textVerdict === 'correct'    && audioVerdict === 'correct')    return 'correct'
+  if (textVerdict === 'wrong_word') return 'incorrect'
+  if (audioVerdict === 'bad_audio') return 'incorrect'
+  if (textVerdict === 'correct' && (audioVerdict === 'correct' || audioVerdict === 'no_audio')) return 'correct'
   if (textVerdict === 'valid_variant' || audioVerdict === 'valid_variant') return 'valid_variant'
   return 'unsure'
 }

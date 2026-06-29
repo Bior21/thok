@@ -105,10 +105,12 @@ export async function fetchNextTask(
         englishGloss:   String(e.english_gloss ?? ''),
         nativeWord:     String(e.native_word ?? ''),
         // Fix the audio URL so the browser can reach it (see toPublicStorageUrl above).
-        audioUrl:       toPublicStorageUrl(String(e.audio_url ?? '')) ?? '',
+        // Seed entries have no audio — audioUrl is left undefined.
+        audioUrl:       e.audio_url ? (toPublicStorageUrl(String(e.audio_url)) ?? undefined) : undefined,
         submitterTown:  String(e.submitter_town ?? ''),
         submitterState: String(e.submitter_state ?? ''),
         affinityTier:   Number(e.affinity_tier ?? 3) as 1 | 2 | 3 | 4,
+        isSeedEntry:    Boolean(e.is_seed_entry ?? false),
       },
     };
   }
@@ -304,7 +306,7 @@ export async function submitReview(
         text_verdict:      review.textVerdict,
         wrong_type:        review.wrongType       ?? null,
         text_correction:   review.textCorrection  ?? null,
-        audio_verdict:     review.audioVerdict,
+        audio_verdict:     review.audioVerdict    ?? null,  // null for seed entries (no audio to judge)
         will_upload_audio: review.willUploadAudio ?? false,
       }),
     }

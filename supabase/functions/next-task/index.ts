@@ -10,13 +10,21 @@
  *
  * HOW THE SCHEDULER WORKS:
  *
- * Phase 1 (first 9 contributions): always contribute.
+ * Phase 1 (first 3 contributions): always contribute.
  *   New contributors should build up a baseline before seeing other people's work.
  *
- * Phase 2 (10+ contributions): weighted random.
+ * Phase 2 (3+ contributions): weighted random.
  *   Default: 70% contribute / 30% review.
  *   Under pressure: 50% / 50% when more than 40% of all entries are unreviewed.
  *   "Queue pressure" prevents a backlog of entries that never get reviewed.
+ *
+ * SEED ENTRY VALIDATION (bootstrap phase):
+ *   The database is pre-seeded with 15,174 entries from two authoritative Dinka
+ *   dictionaries (Brisco/SIL 2006 and SIL/Duerksen). These entries have no audio.
+ *   When a review task is selected, 70% of the time a seed entry is chosen so the
+ *   community can validate and record pronunciations for existing dictionary words.
+ *   The remaining 30% goes to regular contributor entries. This ratio naturally
+ *   decays as seed entries accumulate reviews and fall down the confidence queue.
  *
  * REVIEW ENTRY SELECTION:
  *   Candidates are scored by affinity tier (how similar the reviewer is to
@@ -31,6 +39,14 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+// UUIDs of the bot contributors used to seed dictionary entries.
+// These are used to distinguish seed entries from real contributor entries
+// so seed entries can be routed into a separate validation review flow.
+const SEED_BOT_IDS = [
+  '00000000-0000-0000-0000-000000000002',  // Brisco/SIL 2006 glossary
+  '00000000-0000-0000-0000-000000000003',  // SIL/Duerksen Dinka-English Dictionary
+]
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -88,9 +104,18 @@ serve(async (req) => {
     const taskType  = Math.random() < pReview ? 'review' : 'contribute'
 
     if (taskType === 'review') {
-      const reviewTask = await buildReviewTask(supabase, contributor)
+      // During the bootstrap phase, prefer seed entries 70% of the time so the
+      // community validates dictionary words before they fall behind contributor entries.
+      const preferSeed = Math.random() < 0.7
+      let reviewTask = await buildReviewTask(supabase, contributor, preferSeed)
+
+      // If no entries of the preferred type are available, try the other type.
       if (!reviewTask) {
-        // No reviewable entries available — fall back to contribute.
+        reviewTask = await buildReviewTask(supabase, contributor, !preferSeed)
+      }
+
+      if (!reviewTask) {
+        // No reviewable entries at all — fall back to contribute.
         const contributeTask = await buildContributeTask(supabase, contributorId)
         if (!contributeTask) return err(404, 'NO_TASKS_AVAILABLE', 'No tasks available.')
         return ok({ task_type: 'contribute', prompt: contributeTask, total_contributions: totalContributions ?? 0 })
@@ -193,14 +218,17 @@ async function buildContributeTask(supabase: ReturnType<typeof createClient>, co
  * "Best" = lowest confidence score (needs the most reviews) among entries
  * from the contributor's own dialect/state, ranked by affinity tier.
  *
- * Only entries with audio uploaded are eligible — the reviewer needs to
- * listen to the recording to give a meaningful verdict.
+ * When preferSeed is true, only seed entries (from the pre-loaded dictionaries)
+ * are considered. These have no audio — the reviewer validates the written word
+ * and can optionally record a pronunciation. When preferSeed is false, only
+ * real contributor entries (which have audio) are considered.
  *
- * Returns null if there are no entries left to review.
+ * Returns null if no entries of the requested type are available to review.
  */
 async function buildReviewTask(
   supabase: ReturnType<typeof createClient>,
-  contributor: { id: string; dialect_id: number | null; state: string; language_id: number }
+  contributor: { id: string; dialect_id: number | null; state: string; language_id: number },
+  preferSeed: boolean
 ) {
   // Exclude entries this reviewer has already judged.
   const { data: reviewed } = await supabase
@@ -215,6 +243,7 @@ async function buildReviewTask(
     .select(`
       id,
       concept_id,
+      contributor_id,
       native_word,
       region_town,
       region_state,
@@ -225,11 +254,20 @@ async function buildReviewTask(
       audio_path_wav,
       concepts!inner (english_gloss)
     `)
-    .neq('contributor_id', contributor.id)      // can't review your own entry
-    .eq('language_id', contributor.language_id)  // same language only
-    .not('audio_path_opus', 'is', null)          // must have audio to be reviewable
-    .order('confidence_score', { ascending: true })  // lowest confidence first
+    .neq('contributor_id', contributor.id)       // can't review your own entry
+    .eq('language_id', contributor.language_id)   // same language only
+    .order('confidence_score', { ascending: true })
     .limit(20)
+
+  if (preferSeed) {
+    // Seed entries: from bot contributors, no audio required.
+    query = query.in('contributor_id', SEED_BOT_IDS)
+  } else {
+    // Contributor entries: must have audio and must not be from a seed bot.
+    query = query
+      .not('audio_path_opus', 'is', null)
+      .not('contributor_id', 'in', `(${SEED_BOT_IDS.join(',')})`)
+  }
 
   if (reviewedIds.length > 0) {
     query = query.not('id', 'in', `(${reviewedIds.join(',')})`)
@@ -242,6 +280,7 @@ async function buildReviewTask(
   type Candidate = {
     id: string
     concept_id: string
+    contributor_id: string
     native_word: string
     region_town: string
     region_state: string
@@ -263,9 +302,24 @@ async function buildReviewTask(
   tiered.sort((a, b) => a.affinity_tier - b.affinity_tier)
   const best = tiered[0]
 
-  // Generate a temporary signed URL for the audio file (expires in 10 minutes).
-  // We use the stored path from the DB rather than guessing it — the path only
-  // exists after a successful audio upload, so this never generates broken URLs.
+  const isSeedEntry = SEED_BOT_IDS.includes(best.contributor_id)
+
+  // Seed entries have no audio — return without a URL.
+  if (isSeedEntry) {
+    return {
+      entry_id:        best.id,
+      concept_id:      best.concept_id,
+      english_gloss:   best.concepts.english_gloss,
+      native_word:     best.native_word,
+      audio_url:       null,
+      submitter_town:  best.region_town  ?? '',
+      submitter_state: best.region_state ?? '',
+      affinity_tier:   best.affinity_tier,
+      is_seed_entry:   true,
+    }
+  }
+
+  // Contributor entries: generate a temporary signed URL for the audio file.
   const audioPath = best.audio_path_wav ?? best.audio_path_opus  // prefer WAV if transcoded
   if (!audioPath) return null
 
@@ -282,9 +336,10 @@ async function buildReviewTask(
     english_gloss:   best.concepts.english_gloss,
     native_word:     best.native_word,
     audio_url:       audioUrl,
-    submitter_town:  best.region_town ?? '',
+    submitter_town:  best.region_town  ?? '',
     submitter_state: best.region_state ?? '',
     affinity_tier:   best.affinity_tier,
+    is_seed_entry:   false,
   }
 }
 

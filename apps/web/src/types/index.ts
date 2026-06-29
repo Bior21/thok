@@ -120,6 +120,10 @@ export interface ContributeTask {
  * A task where the contributor listens to someone else's recording and judges it.
  * The affinityTier tells us how closely related the reviewer's dialect is to the original speaker's —
  * this affects how much weight their opinion carries in the quality score.
+ *
+ * isSeedEntry is true when the entry comes from a seeded dictionary (SIL/Duerksen or Brisco)
+ * rather than a real contributor. Seed entries have no audio — the reviewer is asked to
+ * validate the written word and optionally record a pronunciation themselves.
  */
 export interface ReviewTask {
   taskType: 'review';
@@ -128,10 +132,11 @@ export interface ReviewTask {
     conceptId: string;
     englishGloss: string;
     nativeWord: string;
-    audioUrl: string;        // Temporary link to the audio, valid for 10 minutes
+    audioUrl?: string;       // Temporary link to the audio, valid for 10 minutes. Absent for seed entries.
     submitterTown: string;
     submitterState: string;
     affinityTier: AffinityTier;
+    isSeedEntry?: boolean;   // True when the entry comes from a seeded dictionary, not a contributor
   };
 }
 
@@ -180,12 +185,12 @@ export interface ReviewSubmission {
   entryId:           string;
   affinityTier:      AffinityTier;
   textVerdict:       TextVerdict;
-  wrongType?:        WrongType;       // Must be filled in when textVerdict = 'wrong_word'
-  textCorrection?:   string;          // The reviewer's suggestion for the correct word
-  audioVerdict:      AudioVerdict;
-  audioBlob?:        Blob;            // A replacement recording the reviewer made
+  wrongType?:        WrongType;        // Must be filled in when textVerdict = 'wrong_word'
+  textCorrection?:   string;           // The reviewer's suggestion for the correct word
+  audioVerdict?:     AudioVerdict;     // Absent for seed entries which have no audio to judge
+  audioBlob?:        Blob;             // A pronunciation the reviewer recorded (seed or correction)
   audioDurationSec?: number;
-  willUploadAudio?:  boolean;         // Tells the server to expect an audio file upload
+  willUploadAudio?:  boolean;          // Tells the server to expect an audio file upload
 }
 
 /** What the server sends back after a reviewer submits their verdict. */

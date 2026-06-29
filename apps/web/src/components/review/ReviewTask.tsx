@@ -109,6 +109,7 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
       setIsPlaying(false);
       return;
     }
+    if (!entry.audioUrl) return;  // seed entries have no audio
     setIsPlaying(true);
     if (!hasPlayed) setHasPlayed(true);
     stopRef.current = playAudioUrl(entry.audioUrl, () => {
@@ -133,27 +134,29 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
   };
 
   // ── Submit logic ──────────────────────────────────────────────────────────
-  const canSubmit =
-    hasPlayed &&
-    textVerdict  !== null &&
-    audioVerdict !== null &&
-    (textVerdict !== 'wrong_word' || wrongType !== null) &&
-    !isSubmitting &&
-    !isRecording;
+  const textVerdictReady = textVerdict !== null && (textVerdict !== 'wrong_word' || wrongType !== null);
+
+  // Seed entries: no audio to play or judge — text verdict alone unlocks submit.
+  // Regular entries: must play audio and choose both verdicts.
+  const canSubmit = entry.isSeedEntry
+    ? textVerdictReady && !isSubmitting && !isRecording
+    : hasPlayed && textVerdictReady && audioVerdict !== null && !isSubmitting && !isRecording;
 
   const hasCorrection =
     (textVerdict  === 'wrong_word' && textCorrection.trim().length > 0) ||
-    (audioVerdict === 'bad_audio'  && recording !== null);
+    (!entry.isSeedEntry && audioVerdict === 'bad_audio' && recording !== null) ||
+    (entry.isSeedEntry && recording !== null);
 
   const handleSubmit = () => {
-    if (!canSubmit || !textVerdict || !audioVerdict) return;
+    if (!canSubmit || !textVerdict) return;
     onSubmit({
       entryId:          entry.entryId,
       affinityTier:     entry.affinityTier,
       textVerdict,
-      wrongType:        wrongType        ?? undefined,
+      wrongType:        wrongType ?? undefined,
       textCorrection:   textCorrection.trim() || undefined,
-      audioVerdict,
+      // Seed entries have no audio verdict — omit so the server treats it as 'no_audio'.
+      audioVerdict:     entry.isSeedEntry ? undefined : audioVerdict ?? undefined,
       audioBlob:        recording?.blob,
       audioDurationSec: recording?.durationSec,
       willUploadAudio:  recording !== null,
@@ -168,6 +171,19 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
 
       {/* ── Entry card ───────────────────────────────────────────────── */}
       <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+
+        {/* Dictionary source badge — shown only for seed entries */}
+        {entry.isSeedEntry && (
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+            <span className="text-base">📖</span>
+            <div>
+              <p className="text-xs font-medium text-amber-800">Dictionary entry</p>
+              <p className="text-xs text-amber-600">
+                From a trusted Dinka dictionary. Help verify it — and be the first to record its pronunciation.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* English concept */}
         <div>
@@ -239,107 +255,149 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
 
         <div className="border-t border-gray-100" />
 
-        {/* Audio player + audio verdict */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            {/* Play button */}
-            <button
-              onClick={handleTogglePlay}
-              aria-label={isPlaying ? 'Stop audio' : 'Play audio'}
-              className="flex items-center gap-3 px-3 py-2.5 bg-white border border-gray-200 rounded-lg active:bg-gray-50 transition-colors flex-1"
-            >
-              {isPlaying
-                ? <PauseIcon className="text-[#27500A]" />
-                : <PlayIcon  className="text-[#27500A]" />}
-              <div className="flex items-center gap-0.5 flex-1 h-5" aria-hidden="true">
-                {[5, 9, 14, 18, 12, 16, 8, 13, 10, 6, 12, 15, 9, 7].map((h, i) => (
-                  <div
-                    key={i}
-                    className={`w-0.5 rounded-full ${isPlaying ? 'bg-[#27500A]' : 'bg-gray-300'}`}
-                    style={{ height: `${h}px` }}
-                  />
-                ))}
-              </div>
-              <span className="text-xs text-gray-400 flex-shrink-0">
-                {isPlaying ? 'Tap to stop' : 'Play'}
-              </span>
-            </button>
-            <VerdictButtons
-              buttons={AUDIO_BTNS}
-              value={audioVerdict}
-              onChange={v => handleAudioVerdict(v as AudioVerdict)}
-              disabled={!hasPlayed}
-            />
-          </div>
+        {entry.isSeedEntry ? (
+          /* ── Seed entry: no audio to play — show record prompt instead ── */
+          <div className="space-y-2">
+            <p className="text-xs text-gray-400">Record pronunciation <span className="text-gray-300">(optional)</span></p>
 
-          {!hasPlayed && (
-            <p className="text-xs text-center text-gray-400">
-              Play the audio to unlock audio verdict
-            </p>
-          )}
-
-          {/* Audio wrong — inline expansion */}
-          {audioVerdict === 'bad_audio' && (
-            <div className="bg-white border border-red-100 rounded-lg p-3 space-y-2">
-              <p className="text-xs font-medium text-gray-700">
-                Can you record &ldquo;{entry.englishGloss}&rdquo; in Dinka?
-              </p>
-
-              {!isRecording && !recording && (
-                <button
-                  onClick={startRec}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#27500A] text-white text-sm font-medium rounded-lg active:bg-[#1e3d07]"
-                >
-                  <span className="w-2 h-2 rounded-full bg-white" />
-                  Record
-                </button>
-              )}
-
-              {isRecording && (
-                <button
-                  onClick={stopRec}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg"
-                >
-                  <span className="w-2 h-2 rounded-full bg-white animate-record-pulse" />
-                  Recording — tap to stop
-                </button>
-              )}
-
-              {recording && !isRecording && (
-                <div className="flex items-center gap-2">
-                  <p className="flex-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                    ✓ Recorded ({Math.round(recording.durationSec)}s)
-                  </p>
-                  <button
-                    onClick={clearRec}
-                    className="text-xs text-gray-500 px-2 py-2"
-                  >
-                    Re-record
-                  </button>
-                </div>
-              )}
-
+            {!isRecording && !recording && (
               <button
-                onClick={() => { clearRec(); }}
-                className="w-full text-xs text-gray-400 py-1 text-center"
+                onClick={startRec}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#27500A] text-white text-sm font-medium rounded-lg active:bg-[#1e3d07]"
               >
-                Skip — just flag it
+                <span className="w-2 h-2 rounded-full bg-white" />
+                Record &ldquo;{entry.nativeWord}&rdquo;
               </button>
+            )}
+
+            {isRecording && (
+              <button
+                onClick={stopRec}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg"
+              >
+                <span className="w-2 h-2 rounded-full bg-white animate-record-pulse" />
+                Recording — tap to stop
+              </button>
+            )}
+
+            {recording && !isRecording && (
+              <div className="flex items-center gap-2">
+                <p className="flex-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  ✓ Recorded ({Math.round(recording.durationSec)}s)
+                </p>
+                <button onClick={clearRec} className="text-xs text-gray-500 px-2 py-2">
+                  Re-record
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* ── Regular entry: audio player + audio verdict ─────────────── */
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleTogglePlay}
+                aria-label={isPlaying ? 'Stop audio' : 'Play audio'}
+                className="flex items-center gap-3 px-3 py-2.5 bg-white border border-gray-200 rounded-lg active:bg-gray-50 transition-colors flex-1"
+              >
+                {isPlaying
+                  ? <PauseIcon className="text-[#27500A]" />
+                  : <PlayIcon  className="text-[#27500A]" />}
+                <div className="flex items-center gap-0.5 flex-1 h-5" aria-hidden="true">
+                  {[5, 9, 14, 18, 12, 16, 8, 13, 10, 6, 12, 15, 9, 7].map((h, i) => (
+                    <div
+                      key={i}
+                      className={`w-0.5 rounded-full ${isPlaying ? 'bg-[#27500A]' : 'bg-gray-300'}`}
+                      style={{ height: `${h}px` }}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-gray-400 flex-shrink-0">
+                  {isPlaying ? 'Tap to stop' : 'Play'}
+                </span>
+              </button>
+              <VerdictButtons
+                buttons={AUDIO_BTNS}
+                value={audioVerdict}
+                onChange={v => handleAudioVerdict(v as AudioVerdict)}
+                disabled={!hasPlayed}
+              />
             </div>
-          )}
-        </div>
+
+            {!hasPlayed && (
+              <p className="text-xs text-center text-gray-400">
+                Play the audio to unlock audio verdict
+              </p>
+            )}
+
+            {/* Audio wrong — inline expansion */}
+            {audioVerdict === 'bad_audio' && (
+              <div className="bg-white border border-red-100 rounded-lg p-3 space-y-2">
+                <p className="text-xs font-medium text-gray-700">
+                  Can you record &ldquo;{entry.englishGloss}&rdquo; in Dinka?
+                </p>
+
+                {!isRecording && !recording && (
+                  <button
+                    onClick={startRec}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#27500A] text-white text-sm font-medium rounded-lg active:bg-[#1e3d07]"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-white" />
+                    Record
+                  </button>
+                )}
+
+                {isRecording && (
+                  <button
+                    onClick={stopRec}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-white animate-record-pulse" />
+                    Recording — tap to stop
+                  </button>
+                )}
+
+                {recording && !isRecording && (
+                  <div className="flex items-center gap-2">
+                    <p className="flex-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                      ✓ Recorded ({Math.round(recording.durationSec)}s)
+                    </p>
+                    <button onClick={clearRec} className="text-xs text-gray-500 px-2 py-2">
+                      Re-record
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => { clearRec(); }}
+                  className="w-full text-xs text-gray-400 py-1 text-center"
+                >
+                  Skip — just flag it
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Context note ─────────────────────────────────────────────── */}
       <div className="border-l-2 border-gray-200 pl-3 py-0.5 space-y-1">
-        <p className="text-xs text-gray-500">
-          📍 Entry by a user from {entry.submitterTown}, {entry.submitterState}.
-        </p>
-        {showDialectNotice && (
-          <p className="text-xs text-gray-400 italic">
-            You are from {contributor.town}. Dialect differences may exist, so
-            use &ldquo;Valid variant&rdquo; if the word sounds unfamiliar but plausible.
+        {entry.isSeedEntry ? (
+          <p className="text-xs text-gray-500">
+            📖 Source: SIL/Duerksen Dinka Dictionary · {entry.submitterTown} — {entry.submitterState}
           </p>
+        ) : (
+          <>
+            <p className="text-xs text-gray-500">
+              📍 Entry by a user from {entry.submitterTown}, {entry.submitterState}.
+            </p>
+            {showDialectNotice && (
+              <p className="text-xs text-gray-400 italic">
+                You are from {contributor.town}. Dialect differences may exist, so
+                use &ldquo;Valid variant&rdquo; if the word sounds unfamiliar but plausible.
+              </p>
+            )}
+          </>
         )}
       </div>
 
@@ -355,9 +413,11 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
       >
         {isSubmitting
           ? 'Submitting…'
-          : hasCorrection
-            ? 'Submit & send correction'
-            : 'Submit review'}
+          : entry.isSeedEntry && recording
+            ? 'Submit & upload recording'
+            : hasCorrection
+              ? 'Submit & send correction'
+              : 'Submit review'}
       </button>
     </div>
   );
