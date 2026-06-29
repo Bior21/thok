@@ -89,13 +89,16 @@ export function DinkaKeyboard({ value, onChange, onDone }: Props) {
     <div
       className="fixed inset-x-0 bottom-0 z-50 bg-gray-100 border-t border-gray-200 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      // Prevent the 300ms ghost click that mobile browsers fire after a touchEnd.
+      // Without this, dismissing the keyboard via Done causes a phantom tap on
+      // whatever element sits underneath at the same screen coordinates.
+      onTouchEnd={(e) => e.preventDefault()}
     >
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between px-3 py-1.5">
           <span className="text-xxs text-gray-500">Dinka · Thuɔŋjäŋ</span>
           <button
             type="button"
-            // preventDefault so tapping Hide doesn't blur/refocus oddly.
             onPointerDown={(e) => {
               e.preventDefault();
               onDone();
