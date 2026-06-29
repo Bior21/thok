@@ -149,7 +149,7 @@ CREATE TABLE concepts (
 -- =============================================================================
 
 CREATE TABLE contributors (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     -- Onboarding fields (the only two the UI collects)
     town            TEXT,                       -- e.g. 'Bor'
@@ -204,7 +204,7 @@ CREATE TRIGGER trg_contributor_location
 -- =============================================================================
 
 CREATE TABLE lexicon_entries (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     concept_id          TEXT NOT NULL REFERENCES concepts(id) ON DELETE CASCADE,
     native_word         TEXT NOT NULL,
@@ -300,7 +300,7 @@ CREATE TRIGGER trg_updated_at_entries
 -- =============================================================================
 
 CREATE TABLE review_verdicts (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     entry_id        UUID NOT NULL REFERENCES lexicon_entries(id) ON DELETE CASCADE,
     reviewer_id     UUID REFERENCES contributors(id) ON DELETE SET NULL,
 
@@ -438,7 +438,7 @@ $$ LANGUAGE plpgsql STABLE;
 -- =============================================================================
 
 CREATE TABLE sync_queue (
-    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     client_entry_id     TEXT NOT NULL,              -- IndexedDB-generated ID
     contributor_id      UUID REFERENCES contributors(id) ON DELETE SET NULL,
     payload_json        JSONB NOT NULL,

@@ -17,6 +17,11 @@ build/
 
 # Supabase
 .supabase/
+supabase/.temp/
+supabase/.branches/
+
+# TypeScript build cache
+*.tsbuildinfo
 
 # OS
 .DS_Store

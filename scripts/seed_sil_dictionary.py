@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
 """
-Filename: seed_dinka_glossary.py
+Filename: seed_sil_dictionary.py
 Project:  Thok — Indigenous Language Preservation PWA
 
 Description:
     Seeds the Supabase database with Dinka concepts and lexicon entries parsed
-    from the Brisco/SIL 2006 English-to-Dinka glossary by parse_dinka_glossary.py.
+    from the SIL/Duerksen Dinka-English Dictionary by parse_sil_dictionary.py.
 
-    Input file : scripts/dinka_seed.json
-    Outcome    : 3,257 new concepts (c_1000–c_4256), 274 reused, 8,876 entries
+    Input file : scripts/sil_seed.json
+    Outcome    : 4,113 new concepts (c_4257+), 978 reused, 6,298 entries
 
-    Seed concepts use ID range c_1000+ to avoid collisions with the hand-curated
-    concepts c_0001–c_0364 that already exist in the database. The script detects
-    the current maximum concept ID at runtime so re-runs after additional seeding
-    continue from the correct offset.
-
-    A fixed UUID (SEED_CONTRIBUTOR) acts as the contributor record for all seed
-    entries so that seed data is distinguishable from real user contributions.
+    This script is structurally identical to seed_dinka_glossary.py but uses a
+    different SEED_CONTRIBUTOR UUID (…000003 vs …000002) so that entries can be
+    traced to their source dictionary. It is run after the Brisco glossary seed
+    so that the 978 overlapping English concepts are detected as already existing
+    (concepts_reused) rather than duplicated with different IDs.
 
 Source:
-    Brisco, O. & SIL International. English-to-Dinka Glossary, 2006.
-    Parsed output: scripts/dinka_seed.json
+    Duerksen, J. & SIL International. Dinka-English Dictionary.
+    Unicode conversion by Roger Blench, 17 December 2005.
+    Parsed output: scripts/sil_seed.json
 
 Usage:
-    SUPABASE_SERVICE_ROLE_KEY=<key> python3 scripts/seed_dinka_glossary.py
+    SUPABASE_SERVICE_ROLE_KEY=<key> python3 scripts/seed_sil_dictionary.py
 
     Safe to re-run — existing concepts and entries are silently skipped.
+    Must be run AFTER seed_dinka_glossary.py to ensure correct concept ID ordering.
 """
 
 import os
@@ -38,14 +38,15 @@ import requests
 SUPABASE_URL     = 'https://imcidnujyhzanrimwscx.supabase.co'
 SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '')
 
-# Bot UUID for the Brisco/SIL 2006 glossary seed. Distinct from the SIL/Duerksen
-# seed bot (…000003) so the data source can be identified per entry.
-SEED_CONTRIBUTOR = '00000000-0000-0000-0000-000000000002'
+# Bot UUID for the SIL/Duerksen Dinka-English Dictionary seed. Distinct from the
+# Brisco glossary bot (…000002) so data source is traceable per lexicon entry.
+SEED_CONTRIBUTOR = '00000000-0000-0000-0000-000000000003'
 
-SEED_JSON        = os.path.join(os.path.dirname(__file__), 'dinka_seed.json')
+SEED_JSON        = os.path.join(os.path.dirname(__file__), 'sil_seed.json')
 
-# Seed concepts are assigned IDs starting at c_1000. The actual next ID is
-# derived at runtime from the database max, so this is only a floor, not a preset.
+# Floor for seed concept IDs; the actual next ID is derived from the database
+# maximum at runtime so this script always continues from the correct offset
+# regardless of how many concepts were inserted by earlier seeds.
 CONCEPT_ID_START = 1000
 
 if not SERVICE_ROLE_KEY:
@@ -101,14 +102,14 @@ if not langs:
 dinka_lang_id = langs[0]['id']
 print(f'  Dinka language_id = {dinka_lang_id}')
 
-# ── Step 2: upsert seed contributor ───────────────────────────────────────────
+# ── Step 2: upsert SIL seed contributor ───────────────────────────────────────
 
-print('Upserting seed contributor…')
+print('Upserting SIL seed contributor…')
 try:
     rest('POST', 'contributors', body={
         'id':          SEED_CONTRIBUTOR,
         'town':        'Rumbek',
-        'state':       'Warrap State',
+        'state':       'Lakes State',
         'language_id': dinka_lang_id,
         'l1_status':   'L1',
     })
@@ -136,8 +137,8 @@ while True:
 print(f'  Found {len(existing_concepts)} existing concepts.')
 
 # Determine the highest numeric concept ID in the database so the next new ID
-# starts immediately after it. This prevents gaps or collisions when seeding
-# on top of data inserted by other scripts or manual entries.
+# starts immediately after it. When this script runs after seed_dinka_glossary.py,
+# max_id will be ~c_4256 and this script's new concepts begin at c_4257.
 max_id = CONCEPT_ID_START - 1
 for cid in existing_concepts.values():
     if cid.startswith('c_'):
@@ -150,12 +151,12 @@ for cid in existing_concepts.values():
 next_id = max(max_id + 1, CONCEPT_ID_START)
 print(f'  Next seed concept id: c_{next_id:04d}')
 
-# ── Step 4: load seed data ────────────────────────────────────────────────────
+# ── Step 4: load SIL seed data ────────────────────────────────────────────────
 
 with open(SEED_JSON, encoding='utf-8') as f:
     seed_data = json.load(f)
 
-print(f'Loaded {len(seed_data)} seed concepts.')
+print(f'Loaded {len(seed_data)} concepts from sil_seed.json.')
 
 # ── Step 5: insert concepts + entries ─────────────────────────────────────────
 
@@ -172,8 +173,9 @@ for i, concept in enumerate(seed_data):
     english = concept['english'].lower().strip()
 
     if english in existing_concepts:
-        # Concept already present from a previous seed run or hand-curation;
-        # reuse its ID so new entries link to the same concept record.
+        # Concept already seeded by seed_dinka_glossary.py or found in the
+        # hand-curated set; reuse its ID so both dictionaries link to the same
+        # concept record, enriching it with additional dialect entries.
         concept_id = existing_concepts[english]
         concepts_reused += 1
     else:
