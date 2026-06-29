@@ -18,6 +18,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { playAudioUrl } from '@/lib/audio/recorder';
 import { useRecorder } from '@/hooks/useRecorder';
+import { DinkaKeyboard } from '@/components/contribute/DinkaKeyboard';
 import type {
   ReviewTask as ReviewTaskType,
   Contributor,
@@ -76,8 +77,11 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
   // ── Correction recording ──────────────────────────────────────────────────
   const {
     isRecording, recording,
-    start: startRec, stop: stopRec, cancel: cancelRec, clear: clearRec,
+    start: startRec, stop: stopRec, cancel: cancelRec, clear: clearRec, play: playRec,
   } = useRecorder();
+
+  // Controls whether the Dinka keyboard is visible for the correction input.
+  const [showKeyboard, setShowKeyboard] = useState(false);
 
   // Reset everything when the entry changes (next task).
   const resetState = useCallback(() => {
@@ -89,6 +93,7 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
     setAudioVerdict(null);
     setWrongType(null);
     setTextCorrection('');
+    setShowKeyboard(false);
     cancelRec();
   // cancelRec is stable (useCallback in useRecorder)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,6 +129,7 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
     if (v !== 'wrong_word') {
       setWrongType(null);
       setTextCorrection('');
+      setShowKeyboard(false);
     }
   };
 
@@ -243,10 +249,12 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
                 </p>
                 <input
                   type="text"
+                  inputMode="none"
                   value={textCorrection}
-                  onChange={e => setTextCorrection(e.target.value)}
+                  onFocus={() => setShowKeyboard(true)}
+                  readOnly
                   placeholder={`Correct Dinka word for "${entry.englishGloss}"`}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400 bg-white"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gray-400 bg-white cursor-text"
                 />
               </div>
             </div>
@@ -285,6 +293,12 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
                 <p className="flex-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
                   ✓ Recorded ({Math.round(recording.durationSec)}s)
                 </p>
+                <button
+                  onClick={() => playRec()}
+                  className="text-xs text-[#27500A] border border-[#27500A] rounded-lg px-2 py-2"
+                >
+                  ▶ Play
+                </button>
                 <button onClick={clearRec} className="text-xs text-gray-500 px-2 py-2">
                   Re-record
                 </button>
@@ -362,6 +376,12 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
                     <p className="flex-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
                       ✓ Recorded ({Math.round(recording.durationSec)}s)
                     </p>
+                    <button
+                      onClick={() => playRec()}
+                      className="text-xs text-[#27500A] border border-[#27500A] rounded-lg px-2 py-2"
+                    >
+                      ▶ Play
+                    </button>
                     <button onClick={clearRec} className="text-xs text-gray-500 px-2 py-2">
                       Re-record
                     </button>
@@ -419,6 +439,18 @@ export function ReviewTask({ task, isSubmitting, onSubmit, contributor }: Props)
               ? 'Submit & send correction'
               : 'Submit review'}
       </button>
+
+      {/* Dinka keyboard — slides up when the correction input is focused */}
+      {showKeyboard && (
+        <DinkaKeyboard
+          value={textCorrection}
+          onChange={setTextCorrection}
+          onDone={() => setShowKeyboard(false)}
+        />
+      )}
+
+      {/* Spacer so the submit button isn't hidden behind the keyboard */}
+      {showKeyboard && <div className="h-64" />}
     </div>
   );
 }
