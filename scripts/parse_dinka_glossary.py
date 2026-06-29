@@ -168,103 +168,146 @@ def parse_column_lines(lines):
     return results
 
 # --- Sentence parser ----------------------------------------------------------
+# Runs on RAW lines (before column splitting) so that indentation is preserved
+# and wrapped sentences can be rejoined correctly.
 
-def join_continuation_lines(lines):
-    """
-    Join lines that are continuations of the previous line (indented 2 spaces).
-    This reconstructs sentences that were wrapped across two lines in the Word doc.
-    """
-    joined = []
-    buffer = ''
-    for raw in lines:
-        # A continuation line starts with exactly 2 spaces (not more)
-        if raw.startswith('  ') and not raw.startswith('    ') and buffer:
-            buffer = buffer.rstrip() + ' ' + raw.strip()
-        else:
-            if buffer:
-                joined.append(buffer)
-            buffer = raw.rstrip('\n')
-    if buffer:
-        joined.append(buffer)
-    return joined
+META_PREFIXES = ('prs:', 'npr:', 'cf:', 'morph:', 'sbj:', 'loc:',
+                 'vn:', 'va:', 'sg:', 'pl:', 'swr:', 'sca:', 'seb:',
+                 'nwr:', 'ned:', 'sw:', 'se:', 'sc:', 'ne:', 'nw:')
 
-def extract_sentences_from_column(lines):
+def extract_sentences_raw(raw_lines):
     """
-    Extract Dinka–English sentence pairs from one column's lines.
-    Tracks the current English headword for parent_concept linkage.
-    Tracks the last dialect code seen for region attribution.
+    Extract Dinka–English sentence pairs by processing each column as a
+    separate stream, preserving raw indentation for continuation detection.
+
+    Left column:  continuation = raw line has 2-3 leading spaces
+    Right column: continuation = raw line has 40+ leading spaces
+
+    This prevents cross-column contamination (right-column text leaking
+    into left-column sentences and vice-versa).
     """
-    sentences = []
-    current_headword = None
-    current_dialect  = None
-    current_state    = 'Warrap State'
-    seen             = set()   # deduplicate by Dinka sentence
 
-    joined = join_continuation_lines(lines)
+    # ── Step 1: split raw lines into two per-column streams ──────────────────
+    # Each stream entry: (text: str, is_continuation: bool)
 
-    for raw in joined:
-        line = raw.strip()
-        if not line or 'DRAFT' in line:
+    left_stream  = []
+    right_stream = []
+
+    for raw in raw_lines:
+        text = raw.rstrip('\n')
+        if not text.strip():
+            left_stream.append(('', False))
+            right_stream.append(('', False))
             continue
 
-        # Update headword context
-        if is_english_headword(line) and not has_dinka(line):
-            current_headword = line.lower().strip()
+        leading = len(text) - len(text.lstrip(' '))
 
-        # Update dialect context from any entry line that has a dialect code
-        tokens = line.split()
-        for t in tokens[:6]:
-            code = t.rstrip('.,;:/')
-            if code in DIALECT_CODES:
-                current_dialect = code
-                current_state   = DIALECT_STATE[code]
-                break
+        if leading >= 40:
+            # Right-column-only line (very deeply indented)
+            left_stream.append(('', False))
+            right_stream.append((text.strip(), True))
+        else:
+            m = re.search(r' {8,}', text[12:])
+            if m:
+                split_pos  = 12 + m.end()
+                left_text  = text[:12 + m.start()].strip()
+                right_text = text[split_pos:].strip()
+                left_stream.append((left_text,  leading >= 2))
+                right_stream.append((right_text, False) if right_text else ('', False))
+            else:
+                left_stream.append((text.strip(), leading >= 2))
+                right_stream.append(('', False))
 
-        # Search the line for Dinka–English sentence pairs
-        for m in SENT_RE.finditer(line):
-            dinka_part   = m.group(1).strip()
-            english_part = m.group(2).strip()
+    # ── Step 2: join continuations within each stream ─────────────────────────
 
-            # Validate
-            if not has_dinka(dinka_part):
+    def join_stream(stream):
+        joined = []
+        buffer = ''
+        for text, is_cont in stream:
+            if not text:
+                if buffer:
+                    joined.append(buffer)
+                    buffer = ''
                 continue
-            if has_dinka(english_part):
-                continue
-            if len(dinka_part) < 5 or len(english_part) < 6:
-                continue
-            # Skip glossary meta-text that leaks through
-            if any(skip in english_part.lower() for skip in
-                   ['see:', 'cf:', 'morph:', 'variant:', 'gospel', 'chapter']):
-                continue
-            # Skip if Dinka part starts with a grammatical reference marker
-            META_PREFIXES = ('prs:', 'npr:', 'cf:', 'morph:', 'sbj:', 'loc:',
-                             'vn:', 'va:', 'sg:', 'pl:', 'swr:', 'sca:', 'seb:',
-                             'nwr:', 'ned:', 'nwr:', 'sw:', 'se:', 'sc:', 'ne:')
-            if dinka_part.lower().startswith(META_PREFIXES):
-                continue
-            # Skip if English part looks like a definition note rather than a translation
-            # (starts with a dialect code or abbreviation)
-            if re.match(r'^[A-Z]{2,3}[a-z]?:', english_part):
+            if is_cont and buffer:
+                buffer = buffer.rstrip() + ' ' + text
+            else:
+                if buffer:
+                    joined.append(buffer)
+                buffer = text
+        if buffer:
+            joined.append(buffer)
+        return joined
+
+    left_joined  = join_stream(left_stream)
+    right_joined = join_stream(right_stream)
+
+    # ── Step 3: extract sentence pairs from each column's joined lines ────────
+
+    def extract_from_lines(lines):
+        sents      = []
+        seen       = set()
+        current_hw = None
+        current_dl = None
+        current_st = 'Warrap State'
+
+        for raw in lines:
+            line = raw.strip()
+            if not line or 'DRAFT' in line or re.match(r'^\d+$', line):
                 continue
 
-            # Reconstruct full Dinka sentence with punctuation
-            punct = line[m.end(1)] if m.end(1) < len(line) else '.'
-            dinka_sentence = dinka_part + punct
+            if is_english_headword(line) and not has_dinka(line):
+                current_hw = line.lower().strip()
 
-            if dinka_sentence in seen:
-                continue
-            seen.add(dinka_sentence)
+            for tok in line.split()[:8]:
+                code = tok.rstrip('.,;:/')
+                if code in DIALECT_CODES:
+                    current_dl = code
+                    current_st = DIALECT_STATE[code]
+                    break
 
-            sentences.append({
-                'dinka':          dinka_sentence,
-                'english':        english_part,
-                'intent':         infer_intent(english_part),
-                'parent_concept': current_headword,
-                'dialect':        current_dialect,
-                'region_state':   current_state,
-            })
+            for m in SENT_RE.finditer(line):
+                dinka_part   = m.group(1).strip()
+                english_part = m.group(2).strip()
 
-    return sentences
+                if not has_dinka(dinka_part):               continue
+                if has_dinka(english_part):                 continue
+                if len(dinka_part) < 5:                     continue
+                if len(english_part) < 6:                   continue
+                if dinka_part.lower().startswith(META_PREFIXES): continue
+                if re.match(r'^[A-Z]{2,3}[a-z]?:', english_part): continue
+                if any(w in english_part.lower() for w in
+                       ['see:', 'cf:', 'morph:', 'variant:', 'gospel', 'chapter']):
+                    continue
+
+                punct          = line[m.end(1)] if m.end(1) < len(line) else '.'
+                dinka_sentence = dinka_part + punct
+
+                if dinka_sentence in seen:
+                    continue
+                seen.add(dinka_sentence)
+
+                sents.append({
+                    'dinka':          dinka_sentence,
+                    'english':        english_part,
+                    'intent':         infer_intent(english_part),
+                    'parent_concept': current_hw,
+                    'dialect':        current_dl,
+                    'region_state':   current_st,
+                })
+
+        return sents, seen
+
+    left_sents,  left_seen  = extract_from_lines(left_joined)
+    right_sents, right_seen = extract_from_lines(right_joined)
+
+    # Merge, deduplicate by Dinka sentence
+    all_sents = list(left_sents)
+    for s in right_sents:
+        if s['dinka'] not in left_seen:
+            all_sents.append(s)
+
+    return all_sents
 
 # --- Main ---------------------------------------------------------------------
 
@@ -308,17 +351,8 @@ def main():
     print(f'Words  → {len(words_output)} concepts, '
           f'{sum(len(c["entries"]) for c in words_output)} entries')
 
-    # ── Sentences ──────────────────────────────────────────────────────────────
-    left_sents  = extract_sentences_from_column(left_lines)
-    right_sents = extract_sentences_from_column(right_lines)
-
-    # Merge, deduplicate by Dinka sentence
-    all_sents = left_sents
-    seen_dinka = {s['dinka'] for s in all_sents}
-    for s in right_sents:
-        if s['dinka'] not in seen_dinka:
-            all_sents.append(s)
-            seen_dinka.add(s['dinka'])
+    # ── Sentences (extracted from raw lines before column splitting) ───────────
+    all_sents = extract_sentences_raw(dict_lines)
 
     with open(OUT_SENTS, 'w', encoding='utf-8') as f:
         json.dump(all_sents, f, ensure_ascii=False, indent=2)
