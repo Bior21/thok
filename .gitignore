@@ -37,3 +37,5 @@ npm-debug.log*
 
 # Testing
 coverage/
+.vercel
+.env*
