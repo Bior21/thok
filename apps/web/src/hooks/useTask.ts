@@ -242,6 +242,11 @@ export function useTask(): UseTaskState & UseTaskActions {
 
     try {
       await submitReview(contributor.id, submission);
+
+      // Update streak — reviewing counts the same as contributing toward daily activity.
+      const newStreak = await updateStreak();
+      setStreakCount(newStreak);
+
       await fetchTask();
     } catch (err) {
       const message = err instanceof Error
