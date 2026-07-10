@@ -263,9 +263,10 @@ async function buildReviewTask(
     // Seed entries: from bot contributors, no audio required.
     query = query.in('contributor_id', SEED_BOT_IDS)
   } else {
-    // Contributor entries: must have audio and must not be from a seed bot.
+    // Contributor entries: must have audio (WAV from new clients, Opus from old)
+    // and must not be from a seed bot.
     query = query
-      .not('audio_path_opus', 'is', null)
+      .or('audio_path_wav.not.is.null,audio_path_opus.not.is.null')
       .not('contributor_id', 'in', `(${SEED_BOT_IDS.join(',')})`)
   }
 

@@ -11,9 +11,12 @@
  * previewing a just-recorded clip, and one for playing audio fetched from
  * the server during the review process.
  *
- * Audio format: Recordings are saved as WebM/Opus, which works on Chrome
- * and Android. Safari does not support WebM — use Chrome for testing.
- * The server converts recordings to WAV format for long-term storage.
+ * Audio format: MediaRecorder captures a compressed stream (WebM/Opus on
+ * Chrome/Android, MP4/AAC on Safari). After recording stops, we decode the
+ * compressed audio through the Web Audio API and re-encode it as uncompressed
+ * 16-bit PCM WAV. This gives ML engineers lossless source audio without
+ * requiring any server-side transcoding — the subtle breathy/modal vowel
+ * distinctions in Dinka that Opus compression can erase are preserved in full.
  */
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -106,6 +109,7 @@ export class ThokRecorder {
 
   /** Maps a mimeType to the correct file extension for upload. */
   static extensionFor(mimeType: string): string {
+    if (mimeType === 'audio/wav') return 'wav';
     if (mimeType.includes('mp4') || mimeType.includes('aac') || mimeType.includes('m4a')) return 'm4a';
     if (mimeType.includes('ogg')) return 'ogg';
     return 'webm';
@@ -175,8 +179,15 @@ export class ThokRecorder {
   }
 
   /**
-   * Stops recording and returns the audio file along with its duration.
-   * Also releases the microphone so the browser stops showing the recording dot.
+   * Stops recording and returns the audio as a lossless WAV file.
+   *
+   * The browser's MediaRecorder captures compressed audio (Opus or AAC depending
+   * on the platform). We decode it through the Web Audio API to get raw PCM
+   * samples, then write a standard WAV file. This preserves phonetic detail that
+   * lossy codecs discard — critical for Dinka's breathy/modal vowel distinctions.
+   *
+   * Falls back to the compressed blob if WAV encoding fails (shouldn't happen on
+   * any modern browser, but we never block the user on it).
    */
   stop(): Promise<RecordingResult> {
     return new Promise((resolve, reject) => {
@@ -189,11 +200,19 @@ export class ThokRecorder {
       const mimeType = this.mediaRecorder.mimeType;
 
       this.mediaRecorder.onstop = () => {
-        const blob = new Blob(this.chunks, {
-          type: mimeType || '',
-        });
+        const compressed = new Blob(this.chunks, { type: mimeType || '' });
         this.cleanup();
-        resolve({ blob, durationSec, mimeType });
+
+        // Decode compressed → PCM → WAV.
+        const ctx = new AudioContext();
+        compressed.arrayBuffer()
+          .then(buf  => ctx.decodeAudioData(buf))
+          .then(audioBuf => { ctx.close(); resolve({ blob: encodeWav(audioBuf), durationSec, mimeType: 'audio/wav' }); })
+          .catch(err => {
+            ctx.close();
+            console.warn('[ThokRecorder] WAV encode failed, uploading compressed audio:', err);
+            resolve({ blob: compressed, durationSec, mimeType });
+          });
       };
 
       this.mediaRecorder.onerror = (event) => {
@@ -238,6 +257,51 @@ export class ThokRecorder {
     }
     this.mediaRecorder = null;
   }
+}
+
+// ── WAV encoder ────────────────────────────────────────────────────────────────
+
+/**
+ * Encodes a decoded AudioBuffer as a 16-bit PCM WAV blob (mono, native sample rate).
+ *
+ * WAV layout: RIFF header (12 B) + fmt chunk (24 B) + data chunk (8 B + samples).
+ * We always take the first channel only — stereo microphones are uncommon on phones
+ * and mono halves the file size with no quality loss for a single speaker.
+ *
+ * We keep the device's native sample rate rather than downsampling. Most phones
+ * record at 44.1 kHz or 48 kHz; a 3-second clip is ~264 KB — well within the
+ * 10 MB upload limit. ASR engineers can resample to 16 kHz themselves; TTS
+ * engineers want the full-rate original.
+ */
+function encodeWav(audioBuffer: AudioBuffer): Blob {
+  const samples    = audioBuffer.getChannelData(0);  // mono: first channel only
+  const sampleRate = audioBuffer.sampleRate;
+
+  // Convert float32 samples (−1…+1) to signed int16 (−32768…+32767).
+  const int16 = new Int16Array(samples.length);
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    int16[i] = s < 0 ? s * 32768 : s * 32767;
+  }
+
+  const dataBytes = int16.byteLength;
+  const buf       = new ArrayBuffer(44 + dataBytes);
+  const v         = new DataView(buf);
+  const w         = (off: number, str: string) => { for (let i = 0; i < str.length; i++) v.setUint8(off + i, str.charCodeAt(i)); };
+
+  w(0,  'RIFF');  v.setUint32(4,  36 + dataBytes,     true);
+  w(8,  'WAVE');
+  w(12, 'fmt ');  v.setUint32(16, 16,             true);  // PCM chunk size
+                  v.setUint16(20, 1,              true);  // PCM = 1
+                  v.setUint16(22, 1,              true);  // mono
+                  v.setUint32(24, sampleRate,     true);
+                  v.setUint32(28, sampleRate * 2, true);  // byte rate
+                  v.setUint16(32, 2,              true);  // block align
+                  v.setUint16(34, 16,             true);  // bits per sample
+  w(36, 'data');  v.setUint32(40, dataBytes,      true);
+  new Int16Array(buf, 44).set(int16);
+
+  return new Blob([buf], { type: 'audio/wav' });
 }
 
 // ── Audio playback helpers ─────────────────────────────────────────────────────

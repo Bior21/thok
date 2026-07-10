@@ -75,17 +75,18 @@ serve(async (req) => {
 
     if (!entry) return err(404, 'ENTRY_NOT_FOUND', 'Entry not found or access denied.')
 
-    // Store the audio file. Using upsert:true means retries don't fail if the
-    // file was already partially uploaded.
-    const opusPath   = `audio/${entryId}.opus`
-    const audioBytes = await audioFile.arrayBuffer()
+    // Detect format. New clients upload WAV (lossless PCM); older clients may
+    // still send WebM/Opus. Store with the correct extension and update the
+    // matching path column so next-task and get-dictionary can find the file.
+    const isWav      = audioFile.type === 'audio/wav' || (audioFile.name ?? '').endsWith('.wav')
+    const storagePath = isWav ? `audio/${entryId}.wav` : `audio/${entryId}.opus`
+    const contentType = isWav ? 'audio/wav' : (audioFile.type || 'audio/webm')
+    const audioBytes  = await audioFile.arrayBuffer()
 
+    // Using upsert:true means retries don't fail if the file was already partially uploaded.
     const { error: uploadError } = await supabase.storage
       .from('lexicon')
-      .upload(opusPath, audioBytes, {
-        contentType: audioFile.type || 'audio/webm',
-        upsert: true,
-      })
+      .upload(storagePath, audioBytes, { contentType, upsert: true })
 
     if (uploadError) {
       console.error('[upload-audio] storage error:', uploadError)
@@ -96,14 +97,15 @@ serve(async (req) => {
     // Flag them for human review without blocking the upload.
     const snrFlag = audioFile.size < 5000
 
-    // Write the file path back to the entry so next-task can find it.
+    // Write the file path back to the entry. Only update the column that matches
+    // the uploaded format — leave the other column unchanged.
+    const pathUpdate = isWav
+      ? { audio_path_wav:  storagePath }
+      : { audio_path_opus: storagePath }
+
     await supabase
       .from('lexicon_entries')
-      .update({
-        audio_path_opus:    opusPath,
-        audio_duration_sec: durationSec,
-        audio_snr_flag:     snrFlag,
-      })
+      .update({ ...pathUpdate, audio_duration_sec: durationSec, audio_snr_flag: snrFlag })
       .eq('id', entryId)
 
     // This entry is now fully uploaded — mark the sync_queue record resolved.
@@ -118,8 +120,8 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        audio_path_opus: opusPath,
-        audio_path_wav:  null,  // filled in later by a background transcoding job
+        audio_path_opus: isWav ? null : storagePath,
+        audio_path_wav:  isWav ? storagePath : null,
         snr_flag:        snrFlag,
         duration_sec:    durationSec,
       }),
