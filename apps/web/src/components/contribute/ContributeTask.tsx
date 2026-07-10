@@ -48,7 +48,11 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isStorageBlocked = useAppStore(selectIsStorageBlocked);
 
-  const isSentence = task.prompt.conceptType === 'sentence';
+  const { prompt } = task;
+  const isSentence  = prompt.conceptType === 'sentence';
+  // Read-aloud sentences already have a Dinka reference text in contextText.
+  // Translation sentences (no contextText) ask the user to produce their own Dinka.
+  const isReadAloud = isSentence && !!prompt.contextText;
 
   // The Dinka on-screen keyboard appears when the word field is focused.
   const [showKeyboard, setShowKeyboard] = useState(false);
@@ -58,6 +62,14 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
   useEffect(() => {
     setMicExplained(localStorage.getItem('thok_mic_explained') === 'true');
   }, []);
+
+  // When the task changes, initialise the input: pre-fill for read-aloud sentences,
+  // clear for translation sentences and word tasks.
+  useEffect(() => {
+    setNativeWord(isReadAloud ? (prompt.contextText ?? '') : '');
+    setShowKeyboard(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prompt.conceptId]);
 
   const {
     isRecording,
@@ -116,8 +128,6 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
     }, 100);
   }, [canSubmit, nativeWord, recording, contributor, onSubmit, clear]);
 
-  const { prompt } = task;
-
   return (
     <div className="mt-3 space-y-3 animate-fadein">
 
@@ -170,16 +180,29 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
         {/* Sentence prompt */}
         {prompt.promptType === 'sentence' && (
           <div className="py-3 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#185FA5]">
-              Translate this sentence
-            </p>
-            <p className="text-lg font-medium text-[#0C447C] leading-snug">
-              &ldquo;{prompt.englishGloss}&rdquo;
-            </p>
-            {prompt.contextText && (
-              <p className="text-xs text-[#185FA5] italic">
-                {prompt.contextText}
-              </p>
+            {isReadAloud ? (
+              /* Read-aloud: Dinka text is prominent, English is secondary context */
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#185FA5]">
+                  Read this sentence aloud
+                </p>
+                <p className="text-xl font-medium text-[#0C447C] leading-snug">
+                  {prompt.contextText}
+                </p>
+                <p className="text-xs text-[#185FA5]">
+                  &ldquo;{prompt.englishGloss}&rdquo;
+                </p>
+              </>
+            ) : (
+              /* Translate: English is the prompt, user provides Dinka */
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[#185FA5]">
+                  Translate this sentence
+                </p>
+                <p className="text-lg font-medium text-[#0C447C] leading-snug">
+                  &ldquo;{prompt.englishGloss}&rdquo;
+                </p>
+              </>
             )}
           </div>
         )}
@@ -198,7 +221,7 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
           ref={textareaRef}
           value={nativeWord}
           onChange={e => setNativeWord(e.target.value)}
-          placeholder="Type the Dinka sentence…"
+          placeholder={isReadAloud ? 'Edit if your dialect differs…' : 'Type the Dinka sentence…'}
           autoCapitalize="none"
           autoCorrect="off"
           autoComplete="off"
@@ -270,7 +293,7 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
               "
             >
               <MicIcon />
-              {isSentence ? 'Record reading' : 'Record pronunciation'}
+              {isReadAloud ? 'Record reading' : isSentence ? 'Record translation' : 'Record pronunciation'}
             </button>
           )}
 
@@ -381,7 +404,9 @@ export function ContributeTask({ task, isSubmitting, onSubmit, onSkip, contribut
           disabled:opacity-40 disabled:cursor-not-allowed
         "
       >
-        {isSentence
+        {isReadAloud
+          ? 'Skip this sentence'
+          : isSentence
           ? "I don't know the translation"
           : "I don't know this word"
         }
