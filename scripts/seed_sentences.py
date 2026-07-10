@@ -59,12 +59,12 @@ def rest(path, *, method='GET', params=None, body=None):
     return r
 
 def load_existing_concepts():
-    """Returns set of existing english_gloss values (lowercased) for dedup."""
-    existing = set()
+    """Returns dict mapping lowercased english_gloss → concept_id for dedup."""
+    existing = {}
     offset = 0
     while True:
         rows = rest('concepts', params={
-            'select': 'english_gloss',
+            'select': 'id,english_gloss',
             'concept_type': 'eq.sentence',
             'limit': 1000,
             'offset': offset,
@@ -72,7 +72,7 @@ def load_existing_concepts():
         if not rows:
             break
         for r in rows:
-            existing.add(r['english_gloss'].lower().strip())
+            existing[r['english_gloss'].lower().strip()] = r['id']
         offset += len(rows)
         if len(rows) < 1000:
             break
@@ -133,32 +133,28 @@ def main():
         # ── Concept ──────────────────────────────────────────────────────────
 
         if lower in existing_concepts:
-            # Find the concept ID for this gloss so we can check the entry.
-            # We can't easily look it up here without another query, so we'll
-            # rely on the entry dedup by native_word below.
+            # Concept already in DB — reuse its ID for entry creation.
+            concept_id = existing_concepts[lower]
             concepts_skipped += 1
-            # We don't have the concept_id here, so skip entry creation for dupes.
-            # A second run after a partial run would handle this correctly.
-            continue
+        else:
+            concept_id = f's_{next_id_index:04d}'
+            next_id_index += 1
 
-        concept_id = f's_{next_id_index:04d}'
-        next_id_index += 1
-
-        try:
-            rest('concepts', method='POST', body={
-                'id':            concept_id,
-                'english_gloss': english,
-                'concept_type':  'sentence',
-                'intent':        intent,
-                # prompt_context stores the Dinka reference text so the app
-                # can pre-fill the textarea and display it as a read-aloud prompt.
-                'prompt_context': dinka,
-            })
-            existing_concepts.add(lower)
-            concepts_added += 1
-        except RuntimeError as e:
-            print(f'  Concept error "{english[:40]}": {e}')
-            continue
+            try:
+                rest('concepts', method='POST', body={
+                    'id':            concept_id,
+                    'english_gloss': english,
+                    'concept_type':  'sentence',
+                    'intent':        intent,
+                    # prompt_context stores the Dinka reference text so the app
+                    # can pre-fill the textarea and display it as a read-aloud prompt.
+                    'prompt_context': dinka,
+                })
+                existing_concepts[lower] = concept_id
+                concepts_added += 1
+            except RuntimeError as e:
+                print(f'  Concept error "{english[:40]}": {e}')
+                continue
 
         # ── Lexicon entry ─────────────────────────────────────────────────────
         # Record the dictionary Dinka text as a seed entry attributed to the
@@ -184,7 +180,6 @@ def main():
                 'concept_id':    concept_id,
                 'native_word':   dinka,
                 'contributor_id': SEED_BOT_ID,
-                'source':        'seed',
                 'region_state':  region_state,
                 'speaker_l1_status': 'L1',
             })
