@@ -39,3 +39,6 @@ npm-debug.log*
 coverage/
 .vercel
 .env*
+apps/api/__pycache__
+apps/api/routers/__pycache__
+apps/api/lib/__pycache__
