@@ -19,6 +19,10 @@ import type {
   ReviewResult,
   DictionaryResponse,
   DictionaryEntry,
+  DictionaryHeadword,
+  HeadwordDetail,
+  LetterIndexEntry,
+  OwnWordEntry,
   RegisterContributorResponse,
   SubmitEntryResponse,
   UploadAudioResponse,
@@ -341,75 +345,119 @@ export async function submitReview(
 // ── Dictionary ─────────────────────────────────────────────────────────────────
 
 /**
- * Fetches a page of verified word entries for the live dictionary view.
- * Optionally filters by a search term (matches Dinka word or English gloss).
+ * Fetches a page of dictionary headwords (browse or search), grouped so a
+ * Dinka word with several English meanings appears once, not once per sense.
  */
 export async function fetchDictionary(
   contributorId: string,
-  params: { limit?: number; offset?: number; search?: string } = {}
+  params: { limit?: number; offset?: number; search?: string; letter?: string } = {}
 ): Promise<DictionaryResponse> {
-  const { limit = 30, offset = 0, search } = params;
+  const { limit = 30, offset = 0, search, letter } = params;
   const qs = new URLSearchParams({
     limit:  String(limit),
     offset: String(offset),
     ...(search ? { search } : {}),
+    ...(letter ? { letter } : {}),
   });
-  const data = await callFunction<{ entries: Record<string, unknown>[]; total: number }>(
+  const data = await callFunction<{ headwords: Record<string, unknown>[]; total: number }>(
     `/get-dictionary?${qs}`,
     contributorId,
     { method: 'GET' }
   );
 
   return {
-    entries: (data.entries ?? []).map(mapEntry.bind(null, contributorId)),
-    total:   Number(data.total ?? 0),
+    headwords: (data.headwords ?? []).map(mapHeadword),
+    total:     Number(data.total ?? 0),
   };
 }
 
+/** Fetches the A-Z letter index used to build the dictionary's sticky sections. */
+export async function fetchDictionaryIndex(contributorId: string): Promise<LetterIndexEntry[]> {
+  const data = await callFunction<Record<string, unknown>[]>(
+    '/get-dictionary/index',
+    contributorId,
+    { method: 'GET' }
+  );
+  return (data ?? []).map(e => ({
+    letter: String(e.letter ?? ''),
+    count:  Number(e.count  ?? 0),
+  }));
+}
+
 /**
- * Fetches all entries for a single concept — used by the dictionary detail sheet.
- * Returns the concept metadata plus every community recording of that word.
+ * Fetches every sense of one Dinka headword — used by the word detail sheet.
+ * Groups all community recordings under the English meaning they belong to.
  */
-export async function fetchConceptDetail(
+export async function fetchHeadwordDetail(
   contributorId: string,
-  conceptId: string
-): Promise<{
-  conceptId:    string;
-  englishGloss: string;
-  conceptType:  string;
-  contextText:  string | null;
-  entries:      DictionaryEntry[];
-  entryCount:   number;
-}> {
+  nativeWord: string
+): Promise<HeadwordDetail> {
   const data = await callFunction<Record<string, unknown>>(
-    `/get-dictionary?concept_id=${encodeURIComponent(conceptId)}`,
+    `/get-dictionary?headword=${encodeURIComponent(nativeWord)}`,
     contributorId,
     { method: 'GET' }
   );
 
+  const senses = ((data.senses ?? []) as Record<string, unknown>[]).map(s => ({
+    conceptId:    String(s.concept_id    ?? ''),
+    englishGloss: String(s.english_gloss ?? ''),
+    conceptType:  String(s.concept_type  ?? 'word'),
+    entries:      ((s.entries ?? []) as Record<string, unknown>[]).map(mapEntry),
+  }));
+
   return {
-    conceptId:    String(data.concept_id    ?? conceptId),
-    englishGloss: String(data.english_gloss ?? ''),
-    conceptType:  String(data.concept_type  ?? 'word'),
-    contextText:  data.context_text ? String(data.context_text) : null,
-    entries:      ((data.entries ?? []) as Record<string, unknown>[]).map(mapEntry.bind(null, contributorId)),
-    entryCount:   Number(data.entry_count   ?? 0),
+    nativeWord: String(data.native_word ?? nativeWord),
+    senseCount: Number(data.sense_count ?? senses.length),
+    senses,
   };
 }
 
-function mapEntry(_: string, e: Record<string, unknown>): DictionaryEntry {
+/**
+ * Fetches the current user's own submitted words — used by the home-screen
+ * "Your words" widget, which needs one row per submission rather than
+ * headword-grouped results.
+ */
+export async function fetchOwnDictionaryEntries(
+  contributorId: string,
+  limit = 30
+): Promise<OwnWordEntry[]> {
+  const data = await callFunction<{ entries: Record<string, unknown>[] }>(
+    `/get-dictionary?own_only=true&limit=${limit}`,
+    contributorId,
+    { method: 'GET' }
+  );
+
+  return (data.entries ?? []).map(e => ({
+    entryId:      String(e.entry_id      ?? ''),
+    nativeWord:   String(e.native_word   ?? ''),
+    englishGloss: String(e.english_gloss ?? ''),
+    isVerified:   Boolean(e.is_verified  ?? false),
+    audioUrl:     e.audio_url ? (toPublicStorageUrl(String(e.audio_url)) ?? undefined) : undefined,
+  }));
+}
+
+function mapEntry(e: Record<string, unknown>): DictionaryEntry {
   return {
     entryId:      String(e.entry_id    ?? ''),
-    conceptId:    String(e.concept_id  ?? ''),
     nativeWord:   String(e.native_word ?? ''),
-    englishGloss: String(e.english_gloss ?? ''),
-    conceptType:  String(e.concept_type  ?? 'word'),
     isVerified:   Boolean(e.is_verified  ?? false),
     isOwn:        Boolean(e.is_own       ?? false),
     isSeed:       Boolean(e.is_seed      ?? false),
     regionState:  String(e.region_state  ?? ''),
+    dialect:      e.dialect ? String(e.dialect) : undefined,
     durationSec:  e.duration_sec != null ? Number(e.duration_sec) : undefined,
     audioUrl:     e.audio_url ? (toPublicStorageUrl(String(e.audio_url)) ?? undefined) : undefined,
+  };
+}
+
+function mapHeadword(h: Record<string, unknown>): DictionaryHeadword {
+  return {
+    nativeWord:   String(h.native_word    ?? ''),
+    senseCount:   Number(h.sense_count    ?? 1),
+    isVerified:   Boolean(h.is_verified   ?? false),
+    isSeed:       Boolean(h.is_seed       ?? false),
+    isOwn:        Boolean(h.is_own        ?? false),
+    glossPreview: String(h.gloss_preview  ?? ''),
   };
 }
 

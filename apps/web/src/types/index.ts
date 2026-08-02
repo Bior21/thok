@@ -166,21 +166,61 @@ export interface LocalEntry {
 }
 
 /**
- * A word entry as it comes back from the server's dictionary endpoint.
- * This is the "official" version — already uploaded and stored in the database.
+ * One community recording of a headword under a specific sense — the
+ * "leaf" level of headword -> sense -> recording.
  */
 export interface DictionaryEntry {
   entryId:      string;
-  conceptId:    string;
   nativeWord:   string;
-  englishGloss: string;
-  conceptType:  string;      // 'word' or 'sentence'
   isVerified:   boolean;     // True once enough reviewers have agreed it's correct
   isOwn:        boolean;     // True if this was submitted by the person currently using the app
   isSeed:       boolean;     // True if this came from a published dictionary (SIL/Brisco), not a community reviewer
   regionState:  string;      // e.g. "Warrap State"
+  dialect?:     string;      // e.g. "Rek Dinka", inferred from the recording's region
   durationSec?: number;      // Recording length in seconds
   audioUrl?:    string;      // Temporary link to the audio, valid for 10 minutes
+}
+
+/** One English meaning of a headword, with every community recording of it. */
+export interface DictionarySense {
+  conceptId:    string;
+  englishGloss: string;
+  conceptType:  string;      // 'word' or 'sentence'
+  entries:      DictionaryEntry[];
+}
+
+/** A Dinka headword and all of its senses — what the word detail sheet shows. */
+export interface HeadwordDetail {
+  nativeWord: string;
+  senseCount: number;
+  senses:     DictionarySense[];
+}
+
+/** A row in the dictionary's browse/search list — one per distinct Dinka word. */
+export interface DictionaryHeadword {
+  nativeWord:   string;
+  senseCount:   number;
+  isVerified:   boolean;     // True if any sense has been community-verified
+  isSeed:       boolean;     // True if any sense came from a published dictionary
+  isOwn:        boolean;     // True if any sense was submitted by the current user
+  glossPreview: string;      // Up to 2 distinct English glosses, comma-joined
+}
+
+/** One letter section in the dictionary's alphabetical index. */
+export interface LetterIndexEntry {
+  letter: string;
+  count:  number;
+}
+
+/** A single word from the current user's own contributions — used by the
+ * home-screen "Your words" widget, which needs one row per submission
+ * rather than headword-grouped results. */
+export interface OwnWordEntry {
+  entryId:      string;
+  nativeWord:   string;
+  englishGloss: string;
+  isVerified:   boolean;
+  audioUrl?:    string;
 }
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
@@ -251,8 +291,8 @@ export interface UploadAudioResponse {
   durationSec: number;
 }
 
-/** What the server sends back when the app requests the dictionary. */
+/** What the server sends back when browsing/searching the dictionary. */
 export interface DictionaryResponse {
-  entries: DictionaryEntry[];
+  headwords: DictionaryHeadword[];
   total: number;
 }

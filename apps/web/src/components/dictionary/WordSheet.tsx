@@ -2,35 +2,33 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { fetchConceptDetail } from '@/lib/api';
+import { fetchHeadwordDetail } from '@/lib/api';
 import { playAudioUrl } from '@/lib/audio/recorder';
-import type { DictionaryEntry } from '@/types';
+import type { DictionaryEntry, DictionarySense } from '@/types';
 
 interface Props {
-  conceptId:    string;
-  englishGloss: string;
-  nativeWord:   string;
+  nativeWord:    string;
   contributorId: string;
   onClose: () => void;
 }
 
-export function WordSheet({ conceptId, englishGloss, nativeWord, contributorId, onClose }: Props) {
+export function WordSheet({ nativeWord, contributorId, onClose }: Props) {
   const router = useRouter();
-  const [entries, setEntries]     = useState<DictionaryEntry[]>([]);
+  const [senses, setSenses]       = useState<DictionarySense[]>([]);
   const [loading, setLoading]     = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const detail = await fetchConceptDetail(contributorId, conceptId);
-      setEntries(detail.entries);
+      const detail = await fetchHeadwordDetail(contributorId, nativeWord);
+      setSenses(detail.senses);
     } catch {
-      setEntries([]);
+      setSenses([]);
     } finally {
       setLoading(false);
     }
-  }, [contributorId, conceptId]);
+  }, [contributorId, nativeWord]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -50,8 +48,7 @@ export function WordSheet({ conceptId, englishGloss, nativeWord, contributorId, 
     router.push('/task');
   };
 
-  const withAudio    = entries.filter(e => e.audioUrl);
-  const withoutAudio = entries.filter(e => !e.audioUrl);
+  const totalRecordings = senses.reduce((n, s) => n + s.entries.length, 0);
 
   return (
     <div
@@ -68,53 +65,35 @@ export function WordSheet({ conceptId, englishGloss, nativeWord, contributorId, 
         {/* Word header */}
         <div className="px-5 pt-3 pb-4 border-b border-gray-100">
           <p className="text-2xl font-semibold text-gray-900">{nativeWord}</p>
-          <p className="text-sm text-gray-500 mt-0.5">{englishGloss}</p>
-          {entries.length > 0 && (
+          {!loading && senses.length > 0 && (
             <p className="text-xs text-gray-400 mt-1.5">
-              {entries.length} recording{entries.length !== 1 ? 's' : ''} from the community
-              {withAudio.length > 0 && ` · ${withAudio.length} with audio`}
+              {senses.length > 1 ? `${senses.length} meanings · ` : ''}
+              {totalRecordings} recording{totalRecordings !== 1 ? 's' : ''} from the community
             </p>
           )}
         </div>
 
-        {/* Scrollable entries */}
-        <div className="flex-1 overflow-y-auto px-5 py-3 space-y-1">
+        {/* Scrollable senses */}
+        <div className="flex-1 overflow-y-auto px-5 py-3">
           {loading && (
-            <p className="text-sm text-gray-400 py-4 text-center">Loading recordings…</p>
+            <p className="text-sm text-gray-400 py-4 text-center">Loading…</p>
           )}
 
-          {!loading && entries.length === 0 && (
+          {!loading && senses.length === 0 && (
             <p className="text-sm text-gray-400 py-4 text-center">
               No recordings yet — be the first.
             </p>
           )}
 
-          {!loading && withAudio.map(entry => (
-            <RecordingRow
-              key={entry.entryId}
-              entry={entry}
-              isPlaying={playingId === entry.entryId}
-              onPlay={() => handlePlay(entry)}
+          {!loading && senses.map((sense, i) => (
+            <SenseBlock
+              key={sense.conceptId}
+              sense={sense}
+              number={senses.length > 1 ? i + 1 : undefined}
+              playingId={playingId}
+              onPlay={handlePlay}
             />
           ))}
-
-          {!loading && withoutAudio.length > 0 && (
-            <>
-              {withAudio.length > 0 && (
-                <p className="text-xs text-gray-400 pt-3 pb-1 font-medium">
-                  Written only (no recording)
-                </p>
-              )}
-              {withoutAudio.map(entry => (
-                <RecordingRow
-                  key={entry.entryId}
-                  entry={entry}
-                  isPlaying={false}
-                  onPlay={undefined}
-                />
-              ))}
-            </>
-          )}
         </div>
 
         {/* Record CTA */}
@@ -145,6 +124,56 @@ export function WordSheet({ conceptId, englishGloss, nativeWord, contributorId, 
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+function SenseBlock({
+  sense,
+  number,
+  playingId,
+  onPlay,
+}: {
+  sense: DictionarySense;
+  number?: number;
+  playingId: string | null;
+  onPlay: (entry: DictionaryEntry) => void;
+}) {
+  const withAudio    = sense.entries.filter(e => e.audioUrl);
+  const withoutAudio = sense.entries.filter(e => !e.audioUrl);
+
+  return (
+    <div className="py-3 border-b border-gray-100 last:border-0">
+      <div className="flex items-center gap-2 mb-1.5">
+        {number != null && (
+          <span className="text-xs font-semibold text-gray-400">{number}.</span>
+        )}
+        <p className="text-sm font-medium text-gray-700">{sense.englishGloss}</p>
+        {sense.conceptType === 'sentence' && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 font-medium">
+            sentence
+          </span>
+        )}
+      </div>
+
+      <div className="space-y-1">
+        {withAudio.map(entry => (
+          <RecordingRow
+            key={entry.entryId}
+            entry={entry}
+            isPlaying={playingId === entry.entryId}
+            onPlay={() => onPlay(entry)}
+          />
+        ))}
+        {withoutAudio.map(entry => (
+          <RecordingRow
+            key={entry.entryId}
+            entry={entry}
+            isPlaying={false}
+            onPlay={undefined}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function RecordingRow({
   entry,
   isPlaying,
@@ -155,10 +184,12 @@ function RecordingRow({
   onPlay?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-0">
+    <div className="flex items-center gap-3 py-1.5">
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900">{entry.nativeWord}</p>
-        <div className="flex items-center gap-1.5 mt-0.5">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {entry.dialect && (
+            <span className="text-xs text-gray-500 font-medium">{entry.dialect}</span>
+          )}
           {entry.regionState && (
             <span className="text-xs text-gray-400">{entry.regionState}</span>
           )}

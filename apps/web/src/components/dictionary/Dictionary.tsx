@@ -20,9 +20,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAppStore } from '@/store/app';
 import { getAllEntries } from '@/lib/db/operations';
-import { fetchDictionary } from '@/lib/api';
+import { fetchOwnDictionaryEntries } from '@/lib/api';
 import { playAudioUrl, playAudioBlob } from '@/lib/audio/recorder';
-import type { LocalEntry, DictionaryEntry } from '@/types';
+import type { LocalEntry, OwnWordEntry } from '@/types';
 
 // ── Merged entry type ─────────────────────────────────────────────────────────
 
@@ -59,8 +59,8 @@ export function Dictionary() {
 
       if (canFetch) {
         try {
-          const response = await fetchDictionary(contributor.id, { limit: 30 });
-          serverMapped = response.entries.map((e: DictionaryEntry) => ({
+          const ownEntries = await fetchOwnDictionaryEntries(contributor.id, 30);
+          serverMapped = ownEntries.map((e: OwnWordEntry) => ({
             id:           e.entryId,
             nativeWord:   e.nativeWord,
             englishGloss: e.englishGloss,
