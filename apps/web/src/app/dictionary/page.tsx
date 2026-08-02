@@ -169,7 +169,7 @@ export default function DictionaryPage() {
           <div className="flex flex-col items-center justify-center py-20 px-8 text-center">
             {debouncedQ ? (
               <>
-                <p className="text-base font-medium text-gray-700 mb-1">No results for "{debouncedQ}"</p>
+                <p className="text-base font-medium text-gray-700 mb-1">No results for &quot;{debouncedQ}&quot;</p>
                 <p className="text-sm text-gray-400">Try a different spelling or English word</p>
               </>
             ) : (
