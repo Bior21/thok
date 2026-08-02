@@ -31,9 +31,9 @@ async def upload_audio(
            .select("id, contributor_id")
            .eq("id", entry_id)
            .eq("contributor_id", x_contributor_id)
-           .single()
+           .maybe_single()
            .execute())
-    if not r.data:
+    if not r or not r.data:
         raise HTTPException(404, detail={"code": "ENTRY_NOT_FOUND", "message": "Entry not found or access denied."})
 
     content_type = audio_file.content_type or ""

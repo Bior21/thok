@@ -57,16 +57,25 @@ export function getSupabaseClient(): SupabaseClient {
   return _client;
 }
 
-// ── Edge Function helpers ──────────────────────────────────────────────────────
+// ── API routing ────────────────────────────────────────────────────────────────
 
-/** Returns the base URL for all server-side functions. */
+/**
+ * Returns the base URL for all API calls.
+ * When NEXT_PUBLIC_API_URL is set the Python FastAPI backend is used.
+ * Otherwise falls back to Supabase Edge Functions for local development.
+ */
 export function getFunctionsUrl(): string {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (apiUrl) return apiUrl.replace(/\/$/, '');
   const { url } = getSupabaseConfig();
   return `${url}/functions/v1`;
 }
 
 /**
- * Sends a request to one of the Thok server-side functions and returns the result.
+ * Sends a request to the Thok API and returns the result.
+ *
+ * Routes to the Python FastAPI backend when NEXT_PUBLIC_API_URL is set,
+ * otherwise falls back to Supabase Edge Functions.
  *
  * Automatically attaches the API key and the contributor's ID to every request.
  * If the server returns an error, this throws with a readable message so the
@@ -76,7 +85,7 @@ export function getFunctionsUrl(): string {
  * out intentionally — the browser sets it automatically with the correct
  * boundary string that makes multipart uploads work.
  *
- * @param path           - The function to call, e.g. '/next-task'
+ * @param path           - The endpoint to call, e.g. '/next-task'
  * @param contributorId  - The device's contributor ID, attached to every request
  * @param options        - Standard fetch options (method, body, headers)
  */
@@ -85,19 +94,20 @@ export async function callFunction<T>(
   contributorId: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const { anonKey } = getSupabaseConfig();
-
-  // Audio uploads use FormData — the browser must set Content-Type itself
-  // to include the correct multipart boundary. Overwriting it would break uploads.
   const isFormData = options.body instanceof FormData;
+  const isPythonApi = !!process.env.NEXT_PUBLIC_API_URL;
+
+  // Supabase Edge Functions require the anon key; the Python API does not.
+  const extraHeaders: Record<string, string> = isPythonApi
+    ? {}
+    : { 'apikey': getSupabaseConfig().anonKey };
 
   const response = await fetch(`${getFunctionsUrl()}${path}`, {
     ...options,
     headers: {
       ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
-      'apikey': anonKey,
+      ...extraHeaders,
       'x-contributor-id': contributorId,
-      // Caller-provided headers come last so they can override defaults if needed.
       ...(options.headers ?? {}),
     },
   });
@@ -110,7 +120,6 @@ export async function callFunction<T>(
   }
 
   if (!response.ok) {
-    // Pull the server's human-readable error message out of the response.
     const err = (data as { error?: { message?: string } })?.error;
     throw new Error(
       err?.message ?? `[Thok API] Error ${response.status} from ${path}`

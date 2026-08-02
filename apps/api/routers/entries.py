@@ -31,29 +31,23 @@ def submit_entry(body: SubmitEntryBody, x_contributor_id: str = Header(...)):
            .select("entry_id, created_at")
            .eq("client_entry_id", body.client_entry_id)
            .eq("contributor_id", x_contributor_id)
-           .single()
+           .maybe_single()
            .execute())
-    if r.data and r.data.get("entry_id"):
+    if r and r.data and r.data.get("entry_id"):
         return {"entry_id": r.data["entry_id"], "synced_at": r.data["created_at"]}
 
     # Load contributor profile
     r = (sb.table("contributors")
            .select("id, town, state, dialect_id, language_id")
            .eq("id", x_contributor_id)
-           .single()
+           .maybe_single()
            .execute())
-    contributor = r.data
+    contributor = r.data if r else None
     if not contributor:
         raise HTTPException(404, detail={"code": "CONTRIBUTOR_NOT_FOUND", "message": "Contributor not registered."})
 
-    # Get the active language
-    r = (sb.table("languages")
-           .select("id")
-           .eq("is_mvp_active", True)
-           .single()
-           .execute())
-    language = r.data
-    if not language:
+    language_id = contributor["language_id"]
+    if not language_id:
         raise HTTPException(503, detail={"code": "LANGUAGE_INACTIVE", "message": "No active language configured."})
 
     synced_at = datetime.now(timezone.utc).isoformat()
@@ -63,7 +57,7 @@ def submit_entry(body: SubmitEntryBody, x_contributor_id: str = Header(...)):
            .insert({
                "concept_id":        body.concept_id,
                "native_word":       body.native_word.strip(),
-               "language_id":       language["id"],
+               "language_id":       language_id,
                "dialect_id":        contributor["dialect_id"],
                "region_town":       contributor["town"],
                "region_state":      contributor["state"],
@@ -74,11 +68,9 @@ def submit_entry(body: SubmitEntryBody, x_contributor_id: str = Header(...)):
                "synced_at":         synced_at,
                "is_visible":        True,
            })
-           .select("id")
-           .single()
            .execute())
 
-    entry = r.data
+    entry = r.data[0] if r.data else None
     if not entry:
         raise HTTPException(500, detail={"code": "INSERT_FAILED", "message": "Failed to save entry."})
 

@@ -39,9 +39,9 @@ def register_contributor(body: RegisterBody):
                .select("id")
                .eq("code", body.language_code.strip().lower())
                .eq("is_mvp_active", True)
-               .single()
+               .maybe_single()
                .execute())
-        language_id = r.data["id"] if r.data else None
+        language_id = r.data["id"] if r and r.data else None
 
     r = (sb.table("contributors")
            .insert({
@@ -53,11 +53,9 @@ def register_contributor(body: RegisterBody):
                "language_id": language_id,
                "is_reviewer": True,
            })
-           .select("id, dialect_id, language_id")
-           .single()
            .execute())
 
-    contributor = r.data
+    contributor = r.data[0] if r.data else None
     if not contributor:
         raise HTTPException(500, detail={"code": "INSERT_FAILED", "message": "Failed to register contributor."})
 
@@ -66,16 +64,16 @@ def register_contributor(body: RegisterBody):
         r = (sb.table("dialects")
                .select("code")
                .eq("id", contributor["dialect_id"])
-               .single()
+               .maybe_single()
                .execute())
-        dialect_code = r.data["code"] if r.data else None
+        dialect_code = r.data["code"] if r and r.data else None
 
     r = (sb.table("languages")
            .select("code")
            .eq("id", contributor["language_id"])
-           .single()
+           .maybe_single()
            .execute())
-    language_code = r.data["code"] if r.data else "dinka"
+    language_code = r.data["code"] if r and r.data else "dinka"
 
     return {
         "contributor_id":   contributor["id"],

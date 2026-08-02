@@ -45,16 +45,16 @@ def submit_review(body: ReviewBody, x_reviewer_id: str = Header(..., alias="x-co
     r_entry    = (sb.table("lexicon_entries")
                     .select("id, contributor_id, concept_id, native_word, audio_path_opus, audio_path_wav, audio_duration_sec")
                     .eq("id", body.entry_id)
-                    .single()
+                    .maybe_single()
                     .execute())
     r_reviewer = (sb.table("contributors")
                     .select("id, town, state, age_range, gender, l1_status")
                     .eq("id", x_reviewer_id)
-                    .single()
+                    .maybe_single()
                     .execute())
 
-    entry    = r_entry.data
-    reviewer = r_reviewer.data
+    entry    = r_entry.data if r_entry else None
+    reviewer = r_reviewer.data if r_reviewer else None
 
     if not entry:
         raise HTTPException(404, detail={"code": "ENTRY_NOT_FOUND", "message": "Entry not found."})
@@ -69,10 +69,10 @@ def submit_review(body: ReviewBody, x_reviewer_id: str = Header(..., alias="x-co
                 .eq("affinity_tier", tier)
                 .eq("verdict", body.text_verdict)
                 .eq("dimension", "text")
-                .single()
+                .maybe_single()
                 .execute())
 
-    text_score_delta  = r_text.data["score_delta"]  if r_text.data  else 0
+    text_score_delta  = r_text.data["score_delta"]  if r_text and r_text.data  else 0
     audio_score_delta = 0
 
     if not is_seed_review:
@@ -81,9 +81,9 @@ def submit_review(body: ReviewBody, x_reviewer_id: str = Header(..., alias="x-co
                      .eq("affinity_tier", tier)
                      .eq("verdict", audio_verdict)
                      .eq("dimension", "audio")
-                     .single()
+                     .maybe_single()
                      .execute())
-        audio_score_delta = r_audio.data["score_delta"] if r_audio.data else 0
+        audio_score_delta = r_audio.data["score_delta"] if r_audio and r_audio.data else 0
 
     legacy_verdict = _derive_legacy_verdict(body.text_verdict, audio_verdict)
 
@@ -101,14 +101,12 @@ def submit_review(body: ReviewBody, x_reviewer_id: str = Header(..., alias="x-co
                "text_score_delta":  text_score_delta,
                "audio_score_delta": audio_score_delta,
            })
-           .select("id")
-           .single()
            .execute())
 
     if not r.data:
         raise HTTPException(500, detail={"code": "INSERT_FAILED", "message": "Failed to save verdict."})
 
-    inserted_id = r.data["id"]
+    inserted_id = r.data[0]["id"]
 
     # Create a correction entry if the reviewer is providing a better word or new audio
     has_text_correction = body.text_verdict == "wrong_word" and body.text_correction and body.text_correction.strip()
@@ -135,19 +133,17 @@ def submit_review(body: ReviewBody, x_reviewer_id: str = Header(..., alias="x-co
                         "audio_path_wav":          entry["audio_path_wav"]     if inherit_audio else None,
                         "audio_duration_sec":      entry["audio_duration_sec"] if inherit_audio else None,
                     })
-                    .select("id")
-                    .single()
                     .execute())
         if r_corr.data:
-            correction_entry_id = r_corr.data["id"]
+            correction_entry_id = r_corr.data[0]["id"]
 
     # Read the updated scores (the DB trigger has already run)
     r_updated = (sb.table("lexicon_entries")
                    .select("confidence_score, is_verified, text_verified, audio_verified")
                    .eq("id", body.entry_id)
-                   .single()
+                   .maybe_single()
                    .execute())
-    updated = r_updated.data or {}
+    updated = (r_updated.data if r_updated else None) or {}
 
     return {
         "verdict_id":          inserted_id,

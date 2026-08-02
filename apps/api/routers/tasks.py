@@ -18,9 +18,9 @@ def next_task(x_contributor_id: str = Header(...)):
     r = (sb.table("contributors")
            .select("id, dialect_id, state, language_id")
            .eq("id", x_contributor_id)
-           .single()
+           .maybe_single()
            .execute())
-    contributor = r.data
+    contributor = r.data if r else None
     if not contributor:
         raise HTTPException(404, detail={"code": "CONTRIBUTOR_NOT_FOUND", "message": "Contributor not found."})
 
@@ -112,7 +112,7 @@ def _build_contribute_task(sb, contributor_id: str):
 
     query = sb.table("concepts").select("id")
     if excluded_ids:
-        query = query.not_("id", "in", f"({','.join(excluded_ids)})")
+        query = query.not_.in_("id", excluded_ids)
 
     r = query.execute()
     available_ids = [row["id"] for row in (r.data or [])]
@@ -129,9 +129,9 @@ def _build_contribute_task(sb, contributor_id: str):
     r = (sb.table("concepts")
            .select("id, english_gloss, image_path, prompt_context, concept_type")
            .eq("id", random_id)
-           .single()
+           .maybe_single()
            .execute())
-    concept = r.data
+    concept = r.data if r else None
     if not concept:
         return None
 
@@ -178,10 +178,10 @@ def _build_review_task(sb, contributor: dict, prefer_seed: bool):
     else:
         query = (query
                  .or_("audio_path_wav.not.is.null,audio_path_opus.not.is.null")
-                 .not_("contributor_id", "in", f"({','.join(SEED_BOT_IDS)})"))
+                 .not_.in_("contributor_id", SEED_BOT_IDS))
 
     if reviewed_ids:
-        query = query.not_("id", "in", f"({','.join(reviewed_ids)})")
+        query = query.not_.in_("id", reviewed_ids)
 
     r = query.execute()
     candidates = r.data or []

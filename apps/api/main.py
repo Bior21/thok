@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from routers import contributors, tasks, entries, audio, reviews, dictionary
+from routers import contributors, tasks, entries, audio, reviews, dictionary, concepts, leaderboard, language_requests
 
 app = FastAPI(title="Thok API", version="1.0.0")
 
@@ -19,6 +19,9 @@ app.include_router(entries.router)
 app.include_router(audio.router)
 app.include_router(reviews.router)
 app.include_router(dictionary.router)
+app.include_router(concepts.router)
+app.include_router(leaderboard.router)
+app.include_router(language_requests.router)
 
 
 @app.exception_handler(HTTPException)

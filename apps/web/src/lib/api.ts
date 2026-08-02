@@ -18,6 +18,7 @@ import type {
   ReviewSubmission,
   ReviewResult,
   DictionaryResponse,
+  DictionaryEntry,
   RegisterContributorResponse,
   SubmitEntryResponse,
   UploadAudioResponse,
@@ -341,30 +342,73 @@ export async function submitReview(
 
 /**
  * Fetches a page of verified word entries for the live dictionary view.
- * Uses limit/offset pagination so the dictionary can load more entries
- * without fetching everything at once.
+ * Optionally filters by a search term (matches Dinka word or English gloss).
  */
 export async function fetchDictionary(
   contributorId: string,
-  limit = 20,
-  offset = 0
+  params: { limit?: number; offset?: number; search?: string } = {}
 ): Promise<DictionaryResponse> {
+  const { limit = 30, offset = 0, search } = params;
+  const qs = new URLSearchParams({
+    limit:  String(limit),
+    offset: String(offset),
+    ...(search ? { search } : {}),
+  });
   const data = await callFunction<{ entries: Record<string, unknown>[]; total: number }>(
-    `/get-dictionary?limit=${limit}&offset=${offset}`,
+    `/get-dictionary?${qs}`,
     contributorId,
     { method: 'GET' }
   );
 
   return {
-    entries: (data.entries ?? []).map(e => ({
-      entryId:      String(e.entry_id ?? ''),
-      nativeWord:   String(e.native_word ?? ''),
-      englishGloss: String(e.english_gloss ?? ''),
-      isVerified:   Boolean(e.is_verified ?? false),
-      isOwn:        Boolean(e.is_own ?? false),
-      audioUrl:     e.audio_url ? toPublicStorageUrl(String(e.audio_url)) : undefined,
-    })),
-    total: Number(data.total ?? 0),
+    entries: (data.entries ?? []).map(mapEntry.bind(null, contributorId)),
+    total:   Number(data.total ?? 0),
+  };
+}
+
+/**
+ * Fetches all entries for a single concept — used by the dictionary detail sheet.
+ * Returns the concept metadata plus every community recording of that word.
+ */
+export async function fetchConceptDetail(
+  contributorId: string,
+  conceptId: string
+): Promise<{
+  conceptId:    string;
+  englishGloss: string;
+  conceptType:  string;
+  contextText:  string | null;
+  entries:      DictionaryEntry[];
+  entryCount:   number;
+}> {
+  const data = await callFunction<Record<string, unknown>>(
+    `/get-dictionary?concept_id=${encodeURIComponent(conceptId)}`,
+    contributorId,
+    { method: 'GET' }
+  );
+
+  return {
+    conceptId:    String(data.concept_id    ?? conceptId),
+    englishGloss: String(data.english_gloss ?? ''),
+    conceptType:  String(data.concept_type  ?? 'word'),
+    contextText:  data.context_text ? String(data.context_text) : null,
+    entries:      ((data.entries ?? []) as Record<string, unknown>[]).map(mapEntry.bind(null, contributorId)),
+    entryCount:   Number(data.entry_count   ?? 0),
+  };
+}
+
+function mapEntry(_: string, e: Record<string, unknown>): DictionaryEntry {
+  return {
+    entryId:      String(e.entry_id    ?? ''),
+    conceptId:    String(e.concept_id  ?? ''),
+    nativeWord:   String(e.native_word ?? ''),
+    englishGloss: String(e.english_gloss ?? ''),
+    conceptType:  String(e.concept_type  ?? 'word'),
+    isVerified:   Boolean(e.is_verified  ?? false),
+    isOwn:        Boolean(e.is_own       ?? false),
+    regionState:  String(e.region_state  ?? ''),
+    durationSec:  e.duration_sec != null ? Number(e.duration_sec) : undefined,
+    audioUrl:     e.audio_url ? (toPublicStorageUrl(String(e.audio_url)) ?? undefined) : undefined,
   };
 }
 

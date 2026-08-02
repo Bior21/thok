@@ -170,12 +170,16 @@ export interface LocalEntry {
  * This is the "official" version — already uploaded and stored in the database.
  */
 export interface DictionaryEntry {
-  entryId: string;
-  nativeWord: string;
+  entryId:      string;
+  conceptId:    string;
+  nativeWord:   string;
   englishGloss: string;
-  isVerified: boolean;       // True once enough reviewers have agreed it's correct
-  isOwn: boolean;            // True if this was submitted by the person currently using the app
-  audioUrl?: string;         // Temporary link to the audio, valid for 10 minutes
+  conceptType:  string;      // 'word' or 'sentence'
+  isVerified:   boolean;     // True once enough reviewers have agreed it's correct
+  isOwn:        boolean;     // True if this was submitted by the person currently using the app
+  regionState:  string;      // e.g. "Warrap State"
+  durationSec?: number;      // Recording length in seconds
+  audioUrl?:    string;      // Temporary link to the audio, valid for 10 minutes
 }
 
 // ── Reviews ───────────────────────────────────────────────────────────────────

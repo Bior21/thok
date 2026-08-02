@@ -59,7 +59,7 @@ export function Dictionary() {
 
       if (canFetch) {
         try {
-          const response = await fetchDictionary(contributor.id, 30);
+          const response = await fetchDictionary(contributor.id, { limit: 30 });
           serverMapped = response.entries.map((e: DictionaryEntry) => ({
             id:           e.entryId,
             nativeWord:   e.nativeWord,
