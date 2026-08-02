@@ -44,7 +44,7 @@ def get_dictionary_index(x_contributor_id: str = Header(...)):
 
     def build(start, end):
         return (sb.table("lexicon_entries")
-                  .select("native_word")
+                  .select("native_word, concepts!inner(concept_type)")
                   .eq("is_visible", True)
                   .or_(_visibility_filter(x_contributor_id))
                   .range(start, end)
@@ -54,6 +54,8 @@ def get_dictionary_index(x_contributor_id: str = Header(...)):
     for e in _fetch_all(build):
         word = e.get("native_word") or ""
         if not word or not word[0].isalpha():
+            continue
+        if (e.get("concepts") or {}).get("concept_type") == "sentence":
             continue
         words_by_letter.setdefault(word[0], set()).add(word)
 
@@ -252,8 +254,12 @@ def _group_by_headword(rows: list[dict], contributor_id: str) -> list[dict]:
         word = e["native_word"]
         # A handful of seed entries carry PDF-parsing leftovers (a stray
         # leading "(", "-", footnote marker, etc.) instead of a real word —
-        # skip them rather than surface junk headword sections.
+        # skip them rather than surface junk headword sections. Sentences
+        # (concept_type='sentence') are a separate prompt type in this app;
+        # a dictionary headword list should only contain words.
         if not word or not word[0].isalpha():
+            continue
+        if (e.get("concepts") or {}).get("concept_type") == "sentence":
             continue
         if word not in groups:
             groups[word] = {"glosses": [], "concept_ids": set(),
