@@ -57,7 +57,10 @@ def get_dictionary_index(x_contributor_id: str = Header(...)):
             continue
         if (e.get("concepts") or {}).get("concept_type") == "sentence":
             continue
-        words_by_letter.setdefault(word[0], set()).add(word)
+        # Bucket case-insensitively to match the browse endpoint's ilike
+        # letter filter below — otherwise "A" and "a" would split into two
+        # sections whose counts don't match what browsing either returns.
+        words_by_letter.setdefault(word[0].upper(), set()).add(word)
 
     index = [{"letter": letter, "count": len(words)} for letter, words in words_by_letter.items()]
     index.sort(key=lambda x: x["letter"])
