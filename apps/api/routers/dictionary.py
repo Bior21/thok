@@ -53,7 +53,7 @@ def get_dictionary_index(x_contributor_id: str = Header(...)):
     words_by_letter: dict[str, set] = {}
     for e in _fetch_all(build):
         word = e.get("native_word") or ""
-        if not word:
+        if not word or not word[0].isalpha():
             continue
         words_by_letter.setdefault(word[0], set()).add(word)
 
@@ -250,6 +250,11 @@ def _group_by_headword(rows: list[dict], contributor_id: str) -> list[dict]:
     order: list[str] = []
     for e in rows:
         word = e["native_word"]
+        # A handful of seed entries carry PDF-parsing leftovers (a stray
+        # leading "(", "-", footnote marker, etc.) instead of a real word —
+        # skip them rather than surface junk headword sections.
+        if not word or not word[0].isalpha():
+            continue
         if word not in groups:
             groups[word] = {"glosses": [], "concept_ids": set(),
                              "is_verified": False, "is_seed": False, "is_own": False}
