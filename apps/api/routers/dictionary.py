@@ -38,6 +38,33 @@ def _fetch_all(build_page: Callable[[int, int], object], cap: int = 20000) -> li
     return rows
 
 
+@router.get("/get-dictionary/stats")
+def get_dictionary_stats():
+    sb = get_client()
+
+    def build_concepts(start, end):
+        return (sb.table("concepts")
+                  .select("id")
+                  .eq("concept_type", "word")
+                  .range(start, end)
+                  .execute())
+
+    def build_entries(start, end):
+        return (sb.table("lexicon_entries")
+                  .select("concept_id, concepts!inner(concept_type)")
+                  .eq("concepts.concept_type", "word")
+                  .range(start, end)
+                  .execute())
+
+    total_word_concepts = len(_fetch_all(build_concepts))
+    translated_concept_ids = {e["concept_id"] for e in _fetch_all(build_entries)}
+
+    return {
+        "total_word_concepts": total_word_concepts,
+        "translated_word_concepts": len(translated_concept_ids),
+    }
+
+
 @router.get("/get-dictionary/index")
 def get_dictionary_index(x_contributor_id: str = Header(...)):
     sb = get_client()
