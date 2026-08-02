@@ -254,6 +254,11 @@ function WordRow({ entry, onTap }: { entry: DictionaryEntry; onTap: () => void }
             verified
           </span>
         )}
+        {!entry.isVerified && entry.isSeed && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">
+            dictionary source
+          </span>
+        )}
         {entry.audioUrl && (
           <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round"

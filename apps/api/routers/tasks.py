@@ -2,13 +2,9 @@ import random
 from fastapi import APIRouter, Header, HTTPException
 
 from lib.db import get_client
+from lib.constants import SEED_BOT_IDS
 
 router = APIRouter()
-
-SEED_BOT_IDS = [
-    "00000000-0000-0000-0000-000000000002",
-    "00000000-0000-0000-0000-000000000003",
-]
 
 
 @router.get("/next-task")

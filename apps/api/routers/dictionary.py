@@ -2,6 +2,7 @@ from fastapi import APIRouter, Header, HTTPException, Query
 from typing import Optional
 
 from lib.db import get_client
+from lib.constants import SEED_BOT_IDS
 
 router = APIRouter()
 
@@ -10,6 +11,14 @@ ENTRY_SELECT = (
     "audio_path_wav, audio_path_opus, audio_duration_sec, region_state, "
     "concepts!inner(english_gloss, concept_type)"
 )
+
+# Seed entries come from published dictionaries (SIL, Brisco) rather than
+# community review, so they're dictionary-visible without being "verified".
+_SEED_IDS_CSV = ",".join(SEED_BOT_IDS)
+
+
+def _visibility_filter(contributor_id: str) -> str:
+    return f"is_verified.eq.true,contributor_id.eq.{contributor_id},contributor_id.in.({_SEED_IDS_CSV})"
 
 
 @router.get("/get-dictionary")
@@ -52,6 +61,7 @@ def get_dictionary(
                 "region_state": e.get("region_state") or "",
                 "is_verified":  e.get("is_verified", False),
                 "is_own":       e["contributor_id"] == x_contributor_id,
+                "is_seed":      e["contributor_id"] in SEED_BOT_IDS,
                 "duration_sec": e.get("audio_duration_sec"),
                 "audio_url":    audio_url,
             })
@@ -72,7 +82,7 @@ def get_dictionary(
                      .select(ENTRY_SELECT, count="exact")
                      .ilike("native_word", f"%{term}%")
                      .eq("is_visible", True)
-                     .or_(f"is_verified.eq.true,contributor_id.eq.{x_contributor_id}")
+                     .or_(_visibility_filter(x_contributor_id))
                      .order("confidence_score", desc=True)
                      .range(offset, offset + limit - 1)
                      .execute())
@@ -92,7 +102,7 @@ def get_dictionary(
                        .select(ENTRY_SELECT)
                        .in_("concept_id", concept_ids)
                        .eq("is_visible", True)
-                       .or_(f"is_verified.eq.true,contributor_id.eq.{x_contributor_id}")
+                       .or_(_visibility_filter(x_contributor_id))
                        .order("confidence_score", desc=True)
                        .limit(limit)
                        .execute())
@@ -107,7 +117,7 @@ def get_dictionary(
     # ── Mode 3: browse — verified + contributor's own ─────────────────────────
     r = (sb.table("lexicon_entries")
            .select(ENTRY_SELECT, count="exact")
-           .or_(f"is_verified.eq.true,contributor_id.eq.{x_contributor_id}")
+           .or_(_visibility_filter(x_contributor_id))
            .eq("is_visible", True)
            .order("confidence_score", desc=True)
            .range(offset, offset + limit - 1)
@@ -138,6 +148,7 @@ def _map_entry(e: dict, contributor_id: str, sb) -> dict:
         "concept_type":  concept.get("concept_type", "word"),
         "is_verified":   e.get("is_verified", False),
         "is_own":        e["contributor_id"] == contributor_id,
+        "is_seed":       e["contributor_id"] in SEED_BOT_IDS,
         "region_state":  e.get("region_state") or "",
         "duration_sec":  e.get("audio_duration_sec"),
         "audio_url":     _signed_url(sb, e),

@@ -167,6 +167,11 @@ function RecordingRow({
               verified
             </span>
           )}
+          {!entry.isVerified && entry.isSeed && (
+            <span className="text-[10px] px-1 py-px rounded bg-gray-100 text-gray-500 font-medium">
+              dictionary source
+            </span>
+          )}
           {entry.isOwn && (
             <span className="text-[10px] px-1 py-px rounded bg-blue-50 text-blue-700 font-medium">
               yours

@@ -406,6 +406,7 @@ function mapEntry(_: string, e: Record<string, unknown>): DictionaryEntry {
     conceptType:  String(e.concept_type  ?? 'word'),
     isVerified:   Boolean(e.is_verified  ?? false),
     isOwn:        Boolean(e.is_own       ?? false),
+    isSeed:       Boolean(e.is_seed      ?? false),
     regionState:  String(e.region_state  ?? ''),
     durationSec:  e.duration_sec != null ? Number(e.duration_sec) : undefined,
     audioUrl:     e.audio_url ? (toPublicStorageUrl(String(e.audio_url)) ?? undefined) : undefined,

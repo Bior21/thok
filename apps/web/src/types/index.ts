@@ -177,6 +177,7 @@ export interface DictionaryEntry {
   conceptType:  string;      // 'word' or 'sentence'
   isVerified:   boolean;     // True once enough reviewers have agreed it's correct
   isOwn:        boolean;     // True if this was submitted by the person currently using the app
+  isSeed:       boolean;     // True if this came from a published dictionary (SIL/Brisco), not a community reviewer
   regionState:  string;      // e.g. "Warrap State"
   durationSec?: number;      // Recording length in seconds
   audioUrl?:    string;      // Temporary link to the audio, valid for 10 minutes
